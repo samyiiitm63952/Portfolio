@@ -54,13 +54,10 @@
     .nav-links a:hover::after { width:100%; }
 
     /* HERO — true full-bleed, overlaps navbar, zero margins */
-    #hero { height: 700vh; position: relative; padding: 0 !important; margin: 0 !important; }
+    #hero { height: 700vh; position: relative; padding: 0 !important; margin: 0 !important; width: 100%; }
     #hero-sticky {
-      position: sticky; top: 0;
-      left: 50%; right: 50%;
-      margin-left: -50vw;
-      margin-right: -50vw;
-      width: 100vw;
+      position: sticky; top: 0; left: 0;
+      width: 100%;
       height: 100vh;
       overflow: hidden;
     }
@@ -92,12 +89,14 @@
 
     /* SCROLL PANELS */
     #scroll-left-panel, #scroll-right-panel {
-      position: absolute; top: 0; width: 42%; height: 100%;
+      position: absolute; top: 0; width: 44%; height: 100%;
       display: flex; flex-direction: column; justify-content: center; padding: 0 5vw;
       z-index: 10; pointer-events: none;
+      transition: opacity 0.4s ease;
     }
     #scroll-left-panel { left: 0; }
     #scroll-right-panel { right: 0; align-items: flex-end; text-align: right; }
+    .panel-visible { pointer-events: auto !important; }
 
     .panel-tag { font-family:'Space Mono',monospace; font-size:0.65rem; letter-spacing:4px; color:var(--gold); text-transform:uppercase; margin-bottom:12px; opacity:0; transform:translateX(30px); transition:opacity 0.5s,transform 0.5s; }
     #scroll-left-panel .panel-tag { transform:translateX(-30px); }
@@ -114,14 +113,14 @@
     /* RIGHT panel RED theme (Skills / Full Stack Engineer) */
     #scroll-right-panel.theme-red .panel-tag  { color: #e63946; }
     #scroll-right-panel.theme-red .panel-heading { color: #fff; }
-    #scroll-right-panel.theme-red .skill-pill.highlight { border-color: #e63946; color: #e63946; }
-    #scroll-right-panel.theme-red .skill-pill { border-color: rgba(230,57,70,0.2); }
+    #scroll-right-panel.theme-red .skill-pill.highlight { border-color: #e63946; color: #fff; background: rgba(230,57,70,0.25); }
+    #scroll-right-panel.theme-red .skill-pill { border-color: rgba(230,57,70,0.3); color: rgba(255,255,255,0.85); background: rgba(230,57,70,0.08); }
 
     /* LEFT panel BLUE theme (Projects / Building the Future) */
     #scroll-left-panel.theme-blue .panel-tag  { color: #3a9bdc; }
     #scroll-left-panel.theme-blue .panel-heading { color: #fff; }
-    #scroll-left-panel.theme-blue .skill-pill.highlight { border-color: #3a9bdc; color: #3a9bdc; }
-    #scroll-left-panel.theme-blue .skill-pill { border-color: rgba(58,155,220,0.2); }
+    #scroll-left-panel.theme-blue .skill-pill.highlight { border-color: #3a9bdc; color: #fff; background: rgba(58,155,220,0.25); }
+    #scroll-left-panel.theme-blue .skill-pill { border-color: rgba(58,155,220,0.3); color: rgba(255,255,255,0.85); background: rgba(58,155,220,0.08); }
 
     /* Post-hero global blue accent (all sections after animation) */
     body.post-hero-blue { --gold: #3a9bdc; }
@@ -130,6 +129,7 @@
     body.post-hero-blue .nav-logo { color: #3a9bdc; }
     body.post-hero-blue nav.scrolled { border-bottom-color: rgba(58,155,220,0.15); }
     body.post-hero-blue .nav-links a::after { background: #3a9bdc; }
+    body.post-hero-blue .project-badge.winner { background: rgba(58,155,220,0.15); border-color: rgba(58,155,220,0.5); color: #3a9bdc; }
 
     /* SCROLL HINT */
     #scroll-hint { position:absolute; bottom:32px; left:50%; transform:translateX(-50%); z-index:10; display:flex; flex-direction:column; align-items:center; gap:8px; opacity:1; transition:opacity 0.5s; }
@@ -338,7 +338,7 @@
           <span class="skill-pill highlight">Chess Engine</span>
           <span class="skill-pill">Job Portal</span>
           <span class="skill-pill">IoT System</span>
-          <span class="skill-pill" style="border-color:#ffd700;color:#ffd700;">🏆 2nd Prize</span>
+          <span class="skill-pill highlight">🏆 2nd Prize</span>
         </div>
       </div>
 
@@ -605,9 +605,17 @@
   <script>
     const TOTAL = 240;
     const DIR = 'frames';
-    const SKILL_START = 18, SKILL_END = 88;
-    const PROJECT_START = 148, PROJECT_END = 218;
-    const INTRO_HIDE_START = 12;
+
+    // Exact frame zones based on OpenCV frame analysis:
+    // Frame 0-75: Intro (Gold, model facing center)
+    // Frame 75-88: Transition Gold -> Red, model turns head to right
+    // Frame 88-165: Model stationary looking right (Solid Red background) -> RIGHT PANEL (Full-Stack Engineer, Red)
+    // Frame 165-188: Transition Red -> Blue, model turns head to left
+    // Frame 188-239: Model stationary looking left (Solid Blue background) -> LEFT PANEL (Building the Future, Blue)
+    // Past 239: Locks into Blue theme, content unpins into About/Skills/Projects/Education/Contact
+    const SKILL_START = 88, SKILL_END = 165;
+    const PROJECT_START = 188, PROJECT_END = 239;
+    const INTRO_HIDE_START = 15;
 
     const canvas = document.getElementById('hero-canvas');
     const ctx = canvas.getContext('2d');
@@ -626,13 +634,6 @@
     function resize() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
-      // Ensure sticky container also stays full-width on resize
-      const sticky = document.getElementById('hero-sticky');
-      if (sticky) {
-        sticky.style.width = window.innerWidth + 'px';
-        sticky.style.marginLeft = '0';
-        sticky.style.left = '0';
-      }
       drawFrame(currentIdx);
     }
     window.addEventListener('resize', resize);
@@ -642,9 +643,23 @@
 
     function drawFrame(i) {
       i = Math.max(0, Math.min(TOTAL - 1, Math.round(i)));
-      const img = images[i];
+      let img = images[i];
+      // Fallback to nearest loaded frame to eliminate any black flicker
+      if (!img || !img.complete || !img.naturalWidth) {
+        for (let offset = 1; offset < 25; offset++) {
+          if (i - offset >= 0 && images[i - offset] && images[i - offset].complete && images[i - offset].naturalWidth) {
+            img = images[i - offset];
+            break;
+          }
+          if (i + offset < TOTAL && images[i + offset] && images[i + offset].complete && images[i + offset].naturalWidth) {
+            img = images[i + offset];
+            break;
+          }
+        }
+      }
       if (!img || !img.complete || !img.naturalWidth) return;
       const cw = canvas.width, ch = canvas.height;
+      if (!cw || !ch) return;
       const s = Math.max(cw / img.naturalWidth, ch / img.naturalHeight);
       const dw = img.naturalWidth * s, dh = img.naturalHeight * s;
       ctx.clearRect(0, 0, cw, ch);
@@ -652,8 +667,41 @@
       currentIdx = i;
     }
 
-    let target = 0, display = 0, rafId = null;
-    let scrolling = false, scrollTimer = null;
+    let target = 0, display = 0;
+
+    // Smooth animation loop that runs continuously
+    function animLoop() {
+      const diff = target - display;
+
+      if (Math.abs(diff) > 0.05) {
+        display += diff * 0.15;
+      } else {
+        display = target;
+      }
+
+      drawFrame(display);
+      applyColorTheme(display);
+
+      const hero = document.getElementById('hero');
+      const maxScroll = hero.offsetHeight - window.innerHeight;
+      const pastHero = window.scrollY >= maxScroll;
+
+      // 1. Right Panel ("Full-Stack Engineer", Red Theme):
+      // Active while model is looking right (frames 88 to 165)
+      // Stays visible whether scrolling, paused, or reading!
+      const inSkillZone = display >= SKILL_START && display <= SKILL_END && !pastHero;
+      rightPanel.classList.toggle('panel-visible', inSkillZone);
+      rightPanel.classList.toggle('theme-red', inSkillZone);
+
+      // 2. Left Panel ("Building the Future", Blue Theme):
+      // Active while model is looking left (frames 188 to 239)
+      // Stays visible whether scrolling, paused, or reading!
+      const inProjZone = display >= PROJECT_START && display <= PROJECT_END && !pastHero;
+      leftPanel.classList.toggle('panel-visible', inProjZone);
+      leftPanel.classList.toggle('theme-blue', inProjZone);
+
+      requestAnimationFrame(animLoop);
+    }
 
     function onScroll() {
       const hero = document.getElementById('hero');
@@ -662,54 +710,20 @@
       const pct = Math.max(0, Math.min(1, window.scrollY / maxScroll));
       target = pct * (TOTAL - 1);
 
-      // Past the hero section — lock blue theme on body
+      // Past hero section — lock blue theme on body
       const pastHero = window.scrollY >= heroBottom - window.innerHeight;
       document.body.classList.toggle('post-hero-blue', pastHero);
 
-      // Mark as scrolling — immediately hide panels while moving
-      scrolling = true;
-      rightPanel.classList.remove('panel-visible');
-      leftPanel.classList.remove('panel-visible');
-
-      // Detect when scroll stops (no new scroll event for 120ms)
-      clearTimeout(scrollTimer);
-      scrollTimer = setTimeout(() => { scrolling = false; }, 120);
-
       updateUI(target);
-      if (!rafId) rafId = requestAnimationFrame(animLoop);
-    }
-
-    function animLoop() {
-      rafId = null;
-      const diff = target - display;
-      display += diff * 0.18;
-      drawFrame(display);
-      applyColorTheme(display);
-
-      // Show panels only when animation has SETTLED (not scrolling + frame diff tiny)
-      const settled = !scrolling && Math.abs(diff) < 1.5;
-
-      // Skills panel — RED — shows when face looks LEFT (early golden→red frames)
-      const skillVis = settled && display > SKILL_START && display < SKILL_END + 15;
-      rightPanel.classList.toggle('panel-visible', skillVis);
-      rightPanel.classList.toggle('theme-red', skillVis);
-
-      // Projects panel — BLUE — shows when face looks RIGHT (later red→blue frames)
-      const projVis = settled && display > PROJECT_START && display < PROJECT_END + 15;
-      leftPanel.classList.toggle('panel-visible', projVis);
-      leftPanel.classList.toggle('theme-blue', projVis);
-
-      if (Math.abs(diff) > 0.3) rafId = requestAnimationFrame(animLoop);
     }
 
     window.addEventListener('scroll', onScroll, { passive: true });
 
     // Dynamic color theming — gold → red → blue, locks blue after last frame
     function applyColorTheme(frame) {
-      // If we are past hero (body has post-hero-blue), keep overlay blue from last frame
       if (document.body.classList.contains('post-hero-blue')) {
         colorOverlay.style.background =
-          `radial-gradient(ellipse at center, rgba(0,120,255,0.10) 0%, rgba(5,5,5,0.5) 65%, #050505 100%)`;
+          `radial-gradient(ellipse at center, rgba(0,120,255,0.12) 0%, rgba(5,5,5,0.5) 65%, #050505 100%)`;
         return;
       }
 
@@ -717,15 +731,15 @@
       if (frame < 80) {
         // Golden phase
         const t = frame / 80;
-        overlayColor = `rgba(240, ${Math.round(165*(1-t*0.6))}, 0, ${0.10 + t*0.04})`;
-      } else if (frame < 160) {
-        // Red phase — stronger red to match the photo's red mood
-        const t = (frame - 80) / 80;
-        overlayColor = `rgba(200, ${Math.round(20*(1-t))}, 0, ${0.10 + t*0.05})`;
+        overlayColor = `rgba(240, ${Math.round(165 * (1 - t * 0.6))}, 0, ${0.10 + t * 0.04})`;
+      } else if (frame < 165) {
+        // Red phase — strong red ambiance matching the background
+        const t = (frame - 80) / 85;
+        overlayColor = `rgba(200, ${Math.round(20 * (1 - t))}, 0, ${0.10 + t * 0.05})`;
       } else {
-        // Blue phase — locks towards deep blue
-        const t = (frame - 160) / 79;
-        overlayColor = `rgba(0, ${Math.round(80*t)}, ${Math.round(180+75*t)}, ${0.10 + t*0.07})`;
+        // Blue phase — rich electric blue ambiance
+        const t = (frame - 165) / 74;
+        overlayColor = `rgba(0, ${Math.round(80 * t)}, ${Math.round(180 + 75 * t)}, ${0.10 + t * 0.07})`;
       }
       colorOverlay.style.background =
         `radial-gradient(ellipse at center, ${overlayColor} 0%, rgba(5,5,5,0.6) 65%, #050505 100%)`;
@@ -741,14 +755,15 @@
 
       // Intro text fade-out
       if (frame >= INTRO_HIDE_START) {
-        const fade = Math.max(0, 1 - (frame - INTRO_HIDE_START) / 18);
+        const fade = Math.max(0, 1 - (frame - INTRO_HIDE_START) / 25);
         heroIntro.style.opacity = fade;
         heroIntro.style.transform = `translateX(${-(frame - INTRO_HIDE_START) * 2.5}px)`;
+        heroIntro.style.pointerEvents = fade < 0.1 ? 'none' : 'auto';
       } else {
         heroIntro.style.opacity = 1;
         heroIntro.style.transform = 'translateX(0)';
+        heroIntro.style.pointerEvents = 'auto';
       }
-      // NOTE: Panel visibility is handled in animLoop (only when settled)
     }
 
     // Reveal on scroll
@@ -782,19 +797,42 @@
       }, 3000);
     }
 
-    // Preload
+    // Preload with immediate frame 0 rendering & safety timeout
     function preload() {
       return new Promise(resolve => {
         let done = 0;
+        let resolved = false;
+
+        function finish() {
+          if (!resolved) {
+            resolved = true;
+            bar.style.width = '100%';
+            loaderPct.textContent = '100%';
+            resolve();
+          }
+        }
+
+        // Safety fallback: never block user interface on slow loading
+        const safetyTimer = setTimeout(finish, 4000);
+
         for (let i = 0; i < TOTAL; i++) {
           const img = new Image();
           img.src = DIR + '/frame_' + String(i).padStart(4, '0') + '.jpg';
           img.onload = img.onerror = () => {
             done++;
-            const pct = Math.round(done / TOTAL * 100);
+            const pct = Math.round((done / TOTAL) * 100);
             bar.style.width = pct + '%';
             loaderPct.textContent = pct + '%';
-            if (done === TOTAL) resolve();
+
+            // Draw frame 0 immediately as soon as ready
+            if (i === 0 || (images[0] && images[0].complete && currentIdx === 0)) {
+              drawFrame(0);
+            }
+
+            if (done === TOTAL) {
+              clearTimeout(safetyTimer);
+              finish();
+            }
           };
           images[i] = img;
         }
@@ -803,17 +841,13 @@
 
     async function init() {
       resize();
-      setTimeout(() => heroIntro.classList.add('hero-intro-visible'), 200);
+      setTimeout(() => heroIntro.classList.add('hero-intro-visible'), 150);
+      requestAnimationFrame(animLoop);
       await preload();
       loader.classList.add('hidden');
       drawFrame(0);
       applyColorTheme(0);
       onScroll();
-      window.addEventListener('scroll', () => {
-        const totalScroll = document.documentElement.scrollHeight - window.innerHeight;
-        progressBar.style.width = (Math.min(1, window.scrollY / totalScroll) * 100) + '%';
-        navbar.classList.toggle('scrolled', window.scrollY > 20);
-      }, { passive: true });
     }
 
     init();
