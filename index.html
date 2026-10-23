@@ -245,8 +245,165 @@
     .reveal-delay-3 { transition-delay:0.3s; }
     .reveal-delay-4 { transition-delay:0.4s; }
 
-    /* CURSOR */
-    #cursor-glow { position:fixed;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(58,155,220,0.06) 0%,transparent 70%);pointer-events:none;z-index:0;transform:translate(-50%,-50%);transition:opacity 0.3s; }
+    /* BESPOKE DESIGNED CIRCLE CURSOR */
+    body, a, button, input, select, textarea, label { cursor: none !important; }
+    @media (pointer: coarse), (hover: none) {
+      body, a, button, input, select, textarea, label, * { cursor: auto !important; }
+      #custom-cursor-dot, #custom-cursor-ring, #cursor-glow { display: none !important; }
+    }
+
+    #custom-cursor-dot {
+      position: fixed;
+      top: 0; left: 0;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 10001;
+      opacity: 0;
+      transform: translate(-50%, -50%);
+      transition: opacity 0.3s ease, background 0.4s ease, box-shadow 0.4s ease, width 0.2s ease, height 0.2s ease;
+    }
+
+    #custom-cursor-ring {
+      position: fixed;
+      top: 0; left: 0;
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 10000;
+      opacity: 0;
+      transform: translate(-50%, -50%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: width 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+                  height 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+                  border-color 0.4s ease,
+                  background-color 0.4s ease,
+                  box-shadow 0.4s ease,
+                  opacity 0.3s ease;
+    }
+
+    /* Inner rotating HUD orbit ring */
+    #custom-cursor-ring::after {
+      content: '';
+      position: absolute;
+      width: 72%; height: 72%;
+      border-radius: 50%;
+      border: 1px dashed rgba(255, 255, 255, 0.2);
+      animation: cursorSpin 10s linear infinite;
+      transition: border-color 0.4s ease, opacity 0.3s ease;
+      pointer-events: none;
+    }
+
+    @keyframes cursorSpin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* Soft inner vignette */
+    #custom-cursor-ring::before {
+      content: '';
+      position: absolute;
+      width: 100%; height: 100%;
+      border-radius: 50%;
+      background: radial-gradient(circle at center, transparent 75%, rgba(255,255,255,0.06) 100%);
+      pointer-events: none;
+    }
+
+    /* --- THEME: YELLOW (Photo 1 - Hero Greeting / Gold Phase) --- */
+    body.cursor-theme-yellow #custom-cursor-dot {
+      background: #f0a500;
+      box-shadow: 0 0 10px #f0a500, 0 0 18px rgba(240, 165, 0, 0.65);
+    }
+    body.cursor-theme-yellow #custom-cursor-ring {
+      border: 1.5px solid rgba(240, 165, 0, 0.85);
+      background: rgba(240, 165, 0, 0.06);
+      box-shadow: 0 0 16px rgba(240, 165, 0, 0.35), inset 0 0 10px rgba(240, 165, 0, 0.1);
+    }
+    body.cursor-theme-yellow #custom-cursor-ring::after {
+      border-color: rgba(240, 165, 0, 0.4);
+    }
+    body.cursor-theme-yellow #custom-cursor-ring.cursor-hover {
+      border-color: #f0a500;
+      background: rgba(240, 165, 0, 0.16);
+      box-shadow: 0 0 28px rgba(240, 165, 0, 0.6), inset 0 0 14px rgba(240, 165, 0, 0.2);
+    }
+    body.cursor-theme-yellow #cursor-glow {
+      background: radial-gradient(circle, rgba(240, 165, 0, 0.08) 0%, transparent 70%);
+    }
+
+    /* --- THEME: RED (Photo 2 - Full-Stack Engineer / Red Phase) --- */
+    body.cursor-theme-red #custom-cursor-dot {
+      background: #e63946;
+      box-shadow: 0 0 10px #e63946, 0 0 18px rgba(230, 57, 70, 0.75);
+    }
+    body.cursor-theme-red #custom-cursor-ring {
+      border: 1.5px solid rgba(230, 57, 70, 0.9);
+      background: rgba(230, 57, 70, 0.08);
+      box-shadow: 0 0 18px rgba(230, 57, 70, 0.4), inset 0 0 10px rgba(230, 57, 70, 0.12);
+    }
+    body.cursor-theme-red #custom-cursor-ring::after {
+      border-color: rgba(230, 57, 70, 0.45);
+    }
+    body.cursor-theme-red #custom-cursor-ring.cursor-hover {
+      border-color: #ff4d5e;
+      background: rgba(230, 57, 70, 0.2);
+      box-shadow: 0 0 30px rgba(230, 57, 70, 0.65), inset 0 0 16px rgba(230, 57, 70, 0.25);
+    }
+    body.cursor-theme-red #cursor-glow {
+      background: radial-gradient(circle, rgba(230, 57, 70, 0.10) 0%, transparent 70%);
+    }
+
+    /* --- THEME: BLUE (Photo 3 - Building the Future / Blue Phase & Post-Hero) --- */
+    body.cursor-theme-blue #custom-cursor-dot {
+      background: #3a9bdc;
+      box-shadow: 0 0 10px #3a9bdc, 0 0 18px rgba(58, 155, 220, 0.75);
+    }
+    body.cursor-theme-blue #custom-cursor-ring {
+      border: 1.5px solid rgba(58, 155, 220, 0.9);
+      background: rgba(58, 155, 220, 0.08);
+      box-shadow: 0 0 18px rgba(58, 155, 220, 0.4), inset 0 0 10px rgba(58, 155, 220, 0.12);
+    }
+    body.cursor-theme-blue #custom-cursor-ring::after {
+      border-color: rgba(58, 155, 220, 0.45);
+    }
+    body.cursor-theme-blue #custom-cursor-ring.cursor-hover {
+      border-color: #3a9bdc;
+      background: rgba(58, 155, 220, 0.2);
+      box-shadow: 0 0 30px rgba(58, 155, 220, 0.65), inset 0 0 16px rgba(58, 155, 220, 0.25);
+    }
+    body.cursor-theme-blue #cursor-glow {
+      background: radial-gradient(circle, rgba(58, 155, 220, 0.10) 0%, transparent 70%);
+    }
+
+    /* Hover and Click scaling */
+    #custom-cursor-ring.cursor-hover {
+      width: 54px;
+      height: 54px;
+    }
+    #custom-cursor-ring.cursor-active {
+      width: 28px;
+      height: 28px;
+      transform: translate(-50%, -50%) scale(0.9);
+    }
+    .cursor-hover #custom-cursor-dot {
+      width: 4px;
+      height: 4px;
+    }
+
+    /* AMBIENT CURSOR GLOW */
+    #cursor-glow {
+      position: fixed;
+      top: 0; left: 0;
+      width: 350px; height: 350px;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+      transform: translate(-50%, -50%);
+      opacity: 0;
+      transition: opacity 0.4s ease, background 0.5s ease;
+    }
 
     /* PROGRESS */
     #progress-bar { position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,var(--gold),#ff6b00);z-index:200;width:0%;transition:width 0.1s,background 0.5s;box-shadow:0 0 8px var(--gold); }
@@ -267,8 +424,9 @@
     }
   </style>
 </head>
-<body>
-
+<body class="cursor-theme-yellow">
+  <div id="custom-cursor-dot"></div>
+  <div id="custom-cursor-ring"></div>
   <div id="cursor-glow"></div>
   <div id="progress-bar"></div>
 
@@ -630,6 +788,16 @@
     const navbar = document.getElementById('navbar');
     const progressBar = document.getElementById('progress-bar');
     const cursorGlow = document.getElementById('cursor-glow');
+    const cursorDot = document.getElementById('custom-cursor-dot');
+    const cursorRing = document.getElementById('custom-cursor-ring');
+
+    // Cursor position & physics state
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+    let ringX = mouseX;
+    let ringY = mouseY;
+    let isCursorVisible = false;
+    let currentCursorTheme = 'cursor-theme-yellow';
 
     function resize() {
       canvas.width = window.innerWidth;
@@ -699,6 +867,31 @@
       const inProjZone = display >= PROJECT_START && display <= PROJECT_END && !pastHero;
       leftPanel.classList.toggle('panel-visible', inProjZone);
       leftPanel.classList.toggle('theme-blue', inProjZone);
+
+      // 3. Dynamic Cursor Theming synchronized with photo frames:
+      // Photo 1: Gold / Yellow phase (frame 0 to 79)
+      // Photo 2: Red phase (frame 80 to 164)
+      // Photo 3: Blue phase (frame 165 to 239) & Post-Hero (locked blue)
+      let desiredTheme = 'cursor-theme-yellow';
+      if (pastHero || display >= 165) {
+        desiredTheme = 'cursor-theme-blue';
+      } else if (display >= 80) {
+        desiredTheme = 'cursor-theme-red';
+      }
+
+      if (currentCursorTheme !== desiredTheme) {
+        document.body.classList.remove('cursor-theme-yellow', 'cursor-theme-red', 'cursor-theme-blue');
+        document.body.classList.add(desiredTheme);
+        currentCursorTheme = desiredTheme;
+      }
+
+      // Smooth trailing physics for custom cursor ring (lerp)
+      if (isCursorVisible) {
+        ringX += (mouseX - ringX) * 0.18;
+        ringY += (mouseY - ringY) * 0.18;
+        cursorRing.style.left = ringX + 'px';
+        cursorRing.style.top = ringY + 'px';
+      }
 
       requestAnimationFrame(animLoop);
     }
@@ -772,10 +965,57 @@
     }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
     document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
 
-    // Cursor glow
-    document.addEventListener('mousemove', (e) => {
-      cursorGlow.style.left = e.clientX + 'px';
-      cursorGlow.style.top = e.clientY + 'px';
+    // BESPOKE CUSTOM CURSOR INTERACTION
+    window.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      cursorDot.style.left = mouseX + 'px';
+      cursorDot.style.top = mouseY + 'px';
+      cursorGlow.style.left = mouseX + 'px';
+      cursorGlow.style.top = mouseY + 'px';
+
+      if (!isCursorVisible) {
+        isCursorVisible = true;
+        ringX = mouseX;
+        ringY = mouseY;
+        cursorRing.style.left = ringX + 'px';
+        cursorRing.style.top = ringY + 'px';
+        cursorDot.style.opacity = '1';
+        cursorRing.style.opacity = '1';
+        cursorGlow.style.opacity = '1';
+      }
+    });
+
+    document.addEventListener('mouseleave', () => {
+      isCursorVisible = false;
+      cursorDot.style.opacity = '0';
+      cursorRing.style.opacity = '0';
+      cursorGlow.style.opacity = '0';
+    });
+
+    document.addEventListener('mouseenter', () => {
+      isCursorVisible = true;
+      cursorDot.style.opacity = '1';
+      cursorRing.style.opacity = '1';
+      cursorGlow.style.opacity = '1';
+    });
+
+    document.addEventListener('mousedown', () => {
+      cursorRing.classList.add('cursor-active');
+    });
+
+    document.addEventListener('mouseup', () => {
+      cursorRing.classList.remove('cursor-active');
+    });
+
+    // Hover effect on all interactive elements
+    const interactiveQuery = 'a, button, input, textarea, select, .project-card, .skill-pill, .stat-card, .contact-item, .skill-tag, .tech-badge, .nav-logo, .form-submit, .btn-primary, .btn-secondary';
+    document.addEventListener('mouseover', (e) => {
+      if (e.target && e.target.closest && e.target.closest(interactiveQuery)) {
+        cursorRing.classList.add('cursor-hover');
+      } else {
+        cursorRing.classList.remove('cursor-hover');
+      }
     });
 
     // Contact form
