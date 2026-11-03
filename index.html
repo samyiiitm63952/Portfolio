@@ -375,6 +375,47 @@
       padding: 8px;
     }
 
+    /* 3D TILT & SPECULAR GLARE PHYSICS */
+    .tilt-card {
+      position: relative;
+      transform-style: preserve-3d;
+      will-change: transform;
+      perspective: 1000px;
+    }
+    .tilt-card-glare {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      border-radius: inherit;
+      background: radial-gradient(circle 420px at var(--glare-x, 50%) var(--glare-y, 50%), rgba(255, 255, 255, 0.16), transparent 70%);
+      opacity: 0;
+      mix-blend-mode: overlay;
+      transition: opacity 0.35s ease;
+      z-index: 10;
+    }
+    .tilt-card:hover .tilt-card-glare {
+      opacity: 1;
+    }
+    body.post-hero-blue .tilt-card-glare {
+      background: radial-gradient(circle 420px at var(--glare-x, 50%) var(--glare-y, 50%), rgba(58, 155, 220, 0.22), transparent 70%);
+    }
+    .tilt-card.is-tilting {
+      box-shadow: 0 20px 42px -12px rgba(0, 0, 0, 0.75), 0 0 30px rgba(240, 165, 0, 0.08);
+      z-index: 5;
+    }
+    body.post-hero-blue .tilt-card.is-tilting {
+      box-shadow: 0 20px 42px -12px rgba(0, 0, 0, 0.75), 0 0 30px rgba(58, 155, 220, 0.12);
+    }
+    .tilt-card .project-badge,
+    .tilt-card .project-title,
+    .tilt-card .project-visual,
+    .tilt-card .stat-number,
+    .tilt-card .leetcode-header,
+    .tilt-card .category-icon {
+      transform: translateZ(16px);
+      transition: transform 0.25s ease;
+    }
+
     /* EDUCATION */
     #education { background: rgba(255,255,255,0.01); }
     .education-timeline { position:relative; padding-left:2px; }
@@ -400,13 +441,169 @@
     /* CONTACT */
     .contact-grid { display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:start; }
     .contact-info { display:flex; flex-direction:column; gap:24px; }
-    .contact-item { display:flex;align-items:center;gap:16px;padding:20px 24px;background:var(--card-bg);border:1px solid var(--card-border);text-decoration:none;color:inherit;transition:border-color 0.3s,transform 0.3s; }
-    .contact-item:hover { border-color:rgba(58,155,220,0.3); transform:translateX(5px); }
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px 24px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      text-decoration: none;
+      color: inherit;
+      transition: border-color 0.3s, transform 0.3s, background 0.3s;
+      cursor: pointer;
+      position: relative;
+    }
+    .contact-item:hover {
+      border-color: rgba(58,155,220,0.35);
+      transform: translateX(6px);
+      background: rgba(255, 255, 255, 0.06);
+    }
+    .contact-text-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .contact-copy-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 4px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.65);
+      transition: all 0.25s ease;
+      margin-left: auto;
+      pointer-events: none;
+    }
+    .contact-item:hover .contact-copy-badge {
+      background: rgba(240, 165, 0, 0.15);
+      border-color: var(--gold);
+      color: var(--gold);
+      box-shadow: 0 0 14px rgba(240, 165, 0, 0.25);
+    }
+    body.post-hero-blue .contact-item:hover .contact-copy-badge {
+      background: rgba(58, 155, 220, 0.15);
+      border-color: #3a9bdc;
+      color: #3a9bdc;
+      box-shadow: 0 0 14px rgba(58, 155, 220, 0.25);
+    }
+    .contact-copy-badge.copied {
+      background: rgba(34, 197, 94, 0.2) !important;
+      border-color: #22c55e !important;
+      color: #22c55e !important;
+      box-shadow: 0 0 14px rgba(34, 197, 94, 0.35) !important;
+    }
     .contact-icon { width:40px;height:40px;display:flex;align-items:center;justify-content:center;background:rgba(58,155,220,0.08);border:1px solid rgba(58,155,220,0.2);border-radius:2px;flex-shrink:0; transition:background 0.5s,border-color 0.5s; }
     .contact-icon svg { width:18px;height:18px;color:var(--gold); transition:color 0.5s; }
     .contact-text-label { font-size:0.65rem;letter-spacing:2px;color:rgba(255,255,255,0.35);text-transform:uppercase;margin-bottom:3px; }
     .contact-text-val { font-size:0.9rem;color:rgba(255,255,255,0.85); }
     .contact-form { display:flex;flex-direction:column;gap:16px; }
+
+    /* FLOATING TOAST ENGINE */
+    #toast-container {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      z-index: 100000;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      pointer-events: none;
+      max-width: calc(100vw - 40px);
+    }
+    .toast {
+      pointer-events: auto;
+      background: rgba(12, 14, 18, 0.94);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-left: 3px solid #22c55e;
+      border-radius: 6px;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.65), 0 0 25px rgba(34, 197, 94, 0.15);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.8rem;
+      color: #f0f0f0;
+      letter-spacing: 0.5px;
+      transform: translateY(20px) scale(0.96);
+      opacity: 0;
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .toast.toast-visible {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+    .toast.toast-hiding {
+      transform: translateY(12px) scale(0.95);
+      opacity: 0;
+    }
+    .toast-icon {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: rgba(34, 197, 94, 0.15);
+      border: 1px solid rgba(34, 197, 94, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #22c55e;
+      font-weight: 700;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+    .toast-content {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .toast-title {
+      font-weight: 700;
+      color: #fff;
+      font-size: 0.78rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .toast-msg {
+      color: rgba(255, 255, 255, 0.75);
+      font-size: 0.75rem;
+      word-break: break-all;
+    }
+    .toast-progress {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #22c55e, var(--gold));
+      width: 100%;
+      transform-origin: left;
+      animation: toastProgress 3.2s linear forwards;
+    }
+    @keyframes toastProgress {
+      from { transform: scaleX(1); }
+      to { transform: scaleX(0); }
+    }
+    .term-copy-link {
+      color: var(--gold);
+      text-decoration: underline;
+      cursor: pointer;
+      transition: color 0.2s, text-shadow 0.2s;
+    }
+    .term-copy-link:hover {
+      color: #fff;
+      text-shadow: 0 0 8px var(--gold);
+    }
     .form-group { display:flex;flex-direction:column;gap:6px; }
     .form-label { font-size:0.7rem;letter-spacing:2px;color:rgba(255,255,255,0.4);text-transform:uppercase; }
     .form-input,.form-textarea { background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.1);color:#fff;padding:14px 16px;font-family:'Outfit',sans-serif;font-size:0.9rem;outline:none;transition:border-color 0.3s;resize:none;border-radius:2px; }
@@ -726,6 +923,65 @@
       color: rgba(255, 255, 255, 0.5);
     }
 
+    /* SOUND TOGGLE BUTTON (AUDIO HAPTICS) */
+    .sound-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 13px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 999px;
+      color: rgba(255, 255, 255, 0.75);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.8px;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      transition: background 0.25s, border-color 0.25s, box-shadow 0.25s, color 0.25s;
+      user-select: none;
+    }
+    .sound-toggle-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.3);
+      color: #fff;
+    }
+    .sound-toggle-btn.sound-on {
+      border-color: rgba(34, 197, 94, 0.45);
+      background: rgba(34, 197, 94, 0.08);
+      color: #22c55e;
+      box-shadow: 0 0 16px rgba(34, 197, 94, 0.18);
+    }
+    .sound-toggle-btn.sound-on:hover {
+      border-color: #22c55e;
+      box-shadow: 0 0 22px rgba(34, 197, 94, 0.35);
+    }
+    body.cursor-theme-red .sound-toggle-btn:not(.sound-on):hover {
+      border-color: rgba(230, 57, 70, 0.5);
+      color: #ff6b78;
+    }
+    body.cursor-theme-blue .sound-toggle-btn:not(.sound-on):hover,
+    body.post-hero-blue .sound-toggle-btn:not(.sound-on):hover {
+      border-color: rgba(58, 155, 220, 0.5);
+      color: #3a9bdc;
+    }
+    .sound-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      transition: background 0.25s, box-shadow 0.25s;
+    }
+    .sound-toggle-btn.sound-on .sound-dot {
+      background: #22c55e;
+      box-shadow: 0 0 8px #22c55e;
+      animation: soundDotPulse 2s ease infinite;
+    }
+    @keyframes soundDotPulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.35); opacity: 0.65; }
+    }
+
     /* FOOTER TERMINAL LINK */
     .footer-terminal-link {
       background: transparent;
@@ -963,6 +1219,8 @@
       .hero-name { font-size:3rem; }
       .about-stats { grid-template-columns:1fr 1fr; }
       .skills-grid { grid-template-columns:1fr; }
+      .sound-label { display: none; }
+      .sound-toggle-btn { padding: 6px 10px; }
     }
   </style>
 </head>
@@ -1010,6 +1268,11 @@
         <span class="terminal-pill-prompt">&gt;_</span>
         <span class="terminal-pill-label">CLI</span>
         <span class="terminal-pill-key">`</span>
+      </button>
+      <button id="sound-toggle" class="sound-toggle-btn magnetic" aria-label="Toggle Sound Effects" title="Sound Effects: OFF (Click to unmute)">
+        <span class="sound-icon">🔇</span>
+        <span class="sound-label">SFX: OFF</span>
+        <span class="sound-dot"></span>
       </button>
     </div>
   </nav>
@@ -1326,22 +1589,42 @@
     <h2 class="section-title reveal">Let's <span class="accent">Connect</span></h2>
     <div class="contact-grid">
       <div class="contact-info">
-        <p class="reveal" style="font-size:1rem;color:rgba(255,255,255,0.6);line-height:1.8;margin-bottom:8px;">I'm always open to new opportunities, collaborations, or just a great conversation about tech, chess, or music. Drop me a message!</p>
-        <a href="mailto:Samadkhan946148@gmail.com" class="contact-item reveal reveal-delay-1">
+        <p class="reveal" style="font-size:1rem;color:rgba(255,255,255,0.6);line-height:1.8;margin-bottom:8px;">I'm always open to new opportunities, collaborations, or just a great conversation about tech, chess, or music. Click email or phone to copy instantly!</p>
+        <div class="contact-item reveal reveal-delay-1" data-copy="Samadkhan946148@gmail.com" role="button" tabindex="0" title="Click to copy Email address">
           <div class="contact-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,12 2,6"/></svg></div>
-          <div><div class="contact-text-label">Email</div><div class="contact-text-val">Samadkhan946148@gmail.com</div></div>
-        </a>
-        <a href="tel:+916395280880" class="contact-item reveal reveal-delay-2">
+          <div class="contact-text-wrap">
+            <div class="contact-text-label">Email (Click to Copy)</div>
+            <div class="contact-text-val">Samadkhan946148@gmail.com</div>
+          </div>
+          <div class="contact-copy-badge">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            <span>Copy</span>
+          </div>
+        </div>
+        <div class="contact-item reveal reveal-delay-2" data-copy="+91 6395280880" role="button" tabindex="0" title="Click to copy Phone number">
           <div class="contact-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.28h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.96a16 16 0 0 0 6.13 6.13l.95-.95a2 2 0 0 1 2.11-.45c.907.337 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
-          <div><div class="contact-text-label">Phone</div><div class="contact-text-val">+91 6395280880</div></div>
-        </a>
+          <div class="contact-text-wrap">
+            <div class="contact-text-label">Phone (Click to Copy)</div>
+            <div class="contact-text-val">+91 6395280880</div>
+          </div>
+          <div class="contact-copy-badge">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            <span>Copy</span>
+          </div>
+        </div>
         <a href="https://www.linkedin.com/in/samad-khan-39ba42214" target="_blank" rel="noopener" class="contact-item reveal reveal-delay-3">
           <div class="contact-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></div>
-          <div><div class="contact-text-label">LinkedIn</div><div class="contact-text-val">samad-khan-39ba42214</div></div>
+          <div class="contact-text-wrap">
+            <div class="contact-text-label">LinkedIn</div>
+            <div class="contact-text-val">samad-khan-39ba42214</div>
+          </div>
         </a>
         <a href="https://github.com/samyiiitm63952" target="_blank" rel="noopener" class="contact-item reveal reveal-delay-4">
           <div class="contact-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.11.82-.26.82-.58v-2.17c-3.34.73-4.04-1.61-4.04-1.61-.54-1.38-1.33-1.74-1.33-1.74-1.09-.74.08-.73.08-.73 1.2.09 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.49 1 .1-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4c1.02.005 2.04.14 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.82 1.1.82 2.22v3.29c0 .32.22.7.83.58C20.57 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg></div>
-          <div><div class="contact-text-label">GitHub</div><div class="contact-text-val">samyiiitm63952</div></div>
+          <div class="contact-text-wrap">
+            <div class="contact-text-label">GitHub</div>
+            <div class="contact-text-val">samyiiitm63952</div>
+          </div>
         </a>
         <div class="contact-item reveal" style="pointer-events:none;">
           <div class="contact-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
@@ -1368,7 +1651,7 @@
     <div class="footer-links">
       <a href="https://github.com/samyiiitm63952" target="_blank" class="magnetic">GitHub</a>
       <a href="https://www.linkedin.com/in/samad-khan-39ba42214" target="_blank" class="magnetic">LinkedIn</a>
-      <a href="mailto:Samadkhan946148@gmail.com" class="magnetic">Email</a>
+      <a href="mailto:Samadkhan946148@gmail.com" class="magnetic" data-copy="Samadkhan946148@gmail.com" title="Click to copy Email">Email</a>
       <button id="footer-terminal-btn" class="footer-terminal-link magnetic" title="Open Interactive CLI Terminal">&gt;_ CLI Terminal</button>
     </div>
   </footer>
@@ -1680,12 +1963,19 @@
     });
 
     // Hover effect on all interactive elements
-    const interactiveQuery = 'a, button, input, textarea, select, .project-card, .skill-pill, .stat-card, .contact-item, .skill-tag, .tech-badge, .nav-logo, .form-submit, .btn-primary, .btn-secondary, .terminal-pill, .term-btn, .footer-terminal-link';
+    const interactiveQuery = 'a, button, input, textarea, select, .project-card, .skill-pill, .stat-card, .contact-item, .skill-tag, .tech-badge, .nav-logo, .form-submit, .btn-primary, .btn-secondary, .terminal-pill, .sound-toggle-btn, .term-btn, .footer-terminal-link';
+    let lastHoveredInteractive = null;
     document.addEventListener('mouseover', (e) => {
-      if (e.target && e.target.closest && e.target.closest(interactiveQuery)) {
+      const match = e.target && e.target.closest && e.target.closest(interactiveQuery);
+      if (match) {
         cursorRing.classList.add('cursor-hover');
+        if (match !== lastHoveredInteractive) {
+          lastHoveredInteractive = match;
+          if (typeof soundManager !== 'undefined') soundManager.playHover();
+        }
       } else {
         cursorRing.classList.remove('cursor-hover');
+        lastHoveredInteractive = null;
       }
     });
 
@@ -1695,7 +1985,7 @@
     const magneticItems = [];
     function initMagnetic() {
       const targets = document.querySelectorAll(
-        '.magnetic, .btn-primary, .btn-secondary, .btn-resume, .nav-resume-btn, .nav-links a, .nav-logo, .terminal-pill, .form-submit, .project-link.live-link, .leetcode-profile-btn, .footer-terminal-link'
+        '.magnetic, .btn-primary, .btn-secondary, .btn-resume, .nav-resume-btn, .nav-links a, .nav-logo, .terminal-pill, .sound-toggle-btn, .form-submit, .project-link.live-link, .leetcode-profile-btn, .footer-terminal-link'
       );
       targets.forEach(el => {
         if (!el._hasMagnetic) {
@@ -1766,7 +2056,107 @@
     }
 
     // ==========================================
-    // 2. TEXT SCRAMBLE / HACKER DECODE EFFECT
+    // 2. 3D TILT & SPECULAR GLARE PHYSICS ENGINE
+    // ==========================================
+    function init3DTilt() {
+      // Respect touch / mobile devices — only enable on fine hover pointers
+      if (window.matchMedia('(hover: none) or (pointer: coarse)').matches) return;
+
+      const tiltCards = document.querySelectorAll(
+        '.project-card, .leetcode-proof-card, .stat-card, .skill-category, .extra-card, .edu-content'
+      );
+
+      tiltCards.forEach(card => {
+        card.classList.add('tilt-card');
+
+        // Create specular glare overlay if not present
+        let glare = card.querySelector('.tilt-card-glare');
+        if (!glare) {
+          glare = document.createElement('div');
+          glare.className = 'tilt-card-glare';
+          card.appendChild(glare);
+        }
+
+        let rect = null;
+        let isHovered = false;
+        let currentX = 0, currentY = 0;
+        let targetX = 0, targetY = 0;
+        let animId = null;
+
+        // Wide featured cards tilt subtly; standard cards have punchier tilt
+        const maxTilt = card.classList.contains('featured') ? 6.5 : (card.classList.contains('leetcode-proof-card') ? 5 : 9.5);
+
+        function updateBounds() {
+          rect = card.getBoundingClientRect();
+        }
+
+        function tiltLoop() {
+          // If mouse left and card has returned nearly to flat, stop RAF
+          if (!isHovered && Math.abs(currentX) < 0.02 && Math.abs(currentY) < 0.02) {
+            card.style.transform = '';
+            card.classList.remove('is-tilting');
+            animId = null;
+            return;
+          }
+
+          // Smooth spring lerp momentum (0.14 lerp factor)
+          currentX += (targetX - currentX) * 0.14;
+          currentY += (targetY - currentY) * 0.14;
+
+          const rotX = (-currentY * maxTilt).toFixed(2);
+          const rotY = (currentX * maxTilt).toFixed(2);
+          const lift = isHovered ? -6 : 0;
+          const scale = isHovered ? 1.018 : 1.0;
+
+          card.style.transform = `perspective(1000px) translateY(${lift}px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale3d(${scale}, ${scale}, ${scale})`;
+
+          animId = requestAnimationFrame(tiltLoop);
+        }
+
+        card.addEventListener('mouseenter', (e) => {
+          isHovered = true;
+          card.classList.add('is-tilting');
+          updateBounds();
+          card.style.transition = 'border-color 0.3s ease, box-shadow 0.3s ease';
+
+          const x = (e.clientX - rect.left) / rect.width - 0.5;
+          const y = (e.clientY - rect.top) / rect.height - 0.5;
+          targetX = x;
+          targetY = y;
+          currentX = x * 0.4;
+          currentY = y * 0.4;
+
+          card.style.setProperty('--glare-x', `${(x + 0.5) * 100}%`);
+          card.style.setProperty('--glare-y', `${(y + 0.5) * 100}%`);
+
+          if (!animId) {
+            animId = requestAnimationFrame(tiltLoop);
+          }
+        });
+
+        card.addEventListener('mousemove', (e) => {
+          updateBounds();
+          const x = (e.clientX - rect.left) / rect.width - 0.5;
+          const y = (e.clientY - rect.top) / rect.height - 0.5;
+
+          targetX = Math.max(-0.5, Math.min(0.5, x));
+          targetY = Math.max(-0.5, Math.min(0.5, y));
+
+          card.style.setProperty('--glare-x', `${(x + 0.5) * 100}%`);
+          card.style.setProperty('--glare-y', `${(y + 0.5) * 100}%`);
+        });
+
+        card.addEventListener('mouseleave', () => {
+          isHovered = false;
+          targetX = 0;
+          targetY = 0;
+          card.style.transition = 'transform 0.55s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.3s ease, box-shadow 0.3s ease';
+        });
+      });
+    }
+
+    // ==========================================
+    // 3. TEXT SCRAMBLE / HACKER DECODE EFFECT
     // ==========================================
     const SCRAMBLE_GLYPHS = '&%#$@!<>-_\\/[]{}—=+*^?~0123456789';
     let rightPanelScrambled = false;
@@ -1849,7 +2239,292 @@
     }
 
     // ==========================================
-    // 3. INTERACTIVE RETRO CLI TERMINAL
+    // 4. FLOATING TOAST ENGINE & ONE-CLICK COPY
+    // ==========================================
+    function escapeHTML(str) {
+      if (typeof str !== 'string') return '';
+      return str.replace(/[&<>"']/g, m => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[m]));
+    }
+
+    function showToast(message, title = 'Copied to Clipboard') {
+      let container = document.getElementById('toast-container');
+      if (!container) {
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        document.body.appendChild(container);
+      }
+
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.innerHTML = `
+        <div class="toast-icon">✓</div>
+        <div class="toast-content">
+          <div class="toast-title">${escapeHTML(title)}</div>
+          <div class="toast-msg">${escapeHTML(message)}</div>
+        </div>
+        <div class="toast-progress"></div>
+      `;
+
+      container.appendChild(toast);
+
+      requestAnimationFrame(() => {
+        toast.classList.add('toast-visible');
+      });
+
+      const timer = setTimeout(() => {
+        toast.classList.add('toast-hiding');
+        setTimeout(() => {
+          if (toast.parentNode) toast.parentNode.removeChild(toast);
+        }, 350);
+      }, 3200);
+
+      toast.addEventListener('click', () => {
+        clearTimeout(timer);
+        toast.classList.add('toast-hiding');
+        setTimeout(() => {
+          if (toast.parentNode) toast.parentNode.removeChild(toast);
+        }, 350);
+      });
+    }
+
+    function copyToClipboard(text, successMsg = null, badgeEl = null) {
+      function onSuccess() {
+        showToast(successMsg || `✓ Copied ${text} to clipboard!`);
+        if (typeof soundManager !== 'undefined') soundManager.playChime(true);
+        if (badgeEl) {
+          const originalHTML = badgeEl.innerHTML;
+          badgeEl.classList.add('copied');
+          badgeEl.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> <span>Copied!</span>`;
+          setTimeout(() => {
+            badgeEl.classList.remove('copied');
+            badgeEl.innerHTML = originalHTML;
+          }, 2000);
+        }
+      }
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(onSuccess).catch(() => fallbackCopy(text, onSuccess));
+      } else {
+        fallbackCopy(text, onSuccess);
+      }
+    }
+
+    function fallbackCopy(text, onSuccess) {
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        onSuccess();
+      } catch (e) {
+        showToast(`Could not copy: ${text}`, 'Copy Failed');
+      }
+    }
+
+    function initCopyEngine() {
+      document.addEventListener('click', (e) => {
+        const copyTarget = e.target.closest('[data-copy]');
+        if (copyTarget) {
+          // If clicked inside terminal, the terminal's click handler also echoes it
+          const text = copyTarget.getAttribute('data-copy');
+          const badge = copyTarget.querySelector('.contact-copy-badge');
+          copyToClipboard(text, `✓ Copied ${text} to clipboard!`, badge);
+        }
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if ((e.key === 'Enter' || e.key === ' ') && e.target && e.target.matches && e.target.matches('[data-copy]')) {
+          e.preventDefault();
+          e.target.click();
+        }
+      });
+    }
+
+    // ==========================================
+    // 5. INTERACTIVE WEB AUDIO HAPTICS ENGINE
+    // ==========================================
+    const soundManager = (() => {
+      let audioCtx = null;
+      let soundEnabled = false;
+      let lastHoverTime = 0;
+      const HOVER_COOLDOWN = 45; // ms cooldown between hover pops
+
+      function getContext() {
+        if (!audioCtx) {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          if (AudioContextClass) audioCtx = new AudioContextClass();
+        }
+        if (audioCtx && audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        return audioCtx;
+      }
+
+      function updateUI() {
+        const btn = document.getElementById('sound-toggle');
+        if (!btn) return;
+        const icon = btn.querySelector('.sound-icon');
+        const label = btn.querySelector('.sound-label');
+        if (soundEnabled) {
+          btn.classList.add('sound-on');
+          btn.title = 'Sound Effects: ON (Click to mute)';
+          if (icon) icon.textContent = '🔊';
+          if (label) label.textContent = 'SFX: ON';
+        } else {
+          btn.classList.remove('sound-on');
+          btn.title = 'Sound Effects: OFF (Click to unmute)';
+          if (icon) icon.textContent = '🔇';
+          if (label) label.textContent = 'SFX: OFF';
+        }
+      }
+
+      function init() {
+        const saved = localStorage.getItem('portfolio_sound');
+        soundEnabled = saved === 'true'; // Defaults to false (clean recruiter-friendly)
+        updateUI();
+
+        const btn = document.getElementById('sound-toggle');
+        if (btn) {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggle();
+          });
+        }
+
+        // Global listener for resume button downloads
+        document.addEventListener('click', (e) => {
+          const resumeBtn = e.target && e.target.closest && e.target.closest('.btn-resume, .nav-resume-btn');
+          if (resumeBtn) {
+            playChime(true);
+            showToast("✓ Downloading Samad Khan's official Resume (PDF)...", "Resume Download");
+          }
+        });
+      }
+
+      function toggle() {
+        return set(!soundEnabled);
+      }
+
+      function set(val) {
+        soundEnabled = Boolean(val);
+        localStorage.setItem('portfolio_sound', soundEnabled ? 'true' : 'false');
+        updateUI();
+        if (soundEnabled) {
+          getContext();
+          playChime(true);
+          showToast('🔊 Audio haptics enabled', 'Sound Design');
+        } else {
+          showToast('🔇 Audio haptics muted', 'Sound Design');
+        }
+        return soundEnabled;
+      }
+
+      // Subtle low-frequency tactile click for magnetic buttons/cards
+      function playHover() {
+        if (!soundEnabled) return;
+        const nowMs = performance.now();
+        if (nowMs - lastHoverTime < HOVER_COOLDOWN) return;
+        lastHoverTime = nowMs;
+
+        const ctx = getContext();
+        if (!ctx) return;
+        const now = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(160, now);
+        osc.frequency.exponentialRampToValueAtTime(45, now + 0.035);
+
+        gain.gain.setValueAtTime(0.001, now);
+        gain.gain.linearRampToValueAtTime(0.032, now + 0.005);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.035);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.04);
+      }
+
+      // Crisp mechanical keystroke sound for interactive CLI
+      function playKey() {
+        if (!soundEnabled) return;
+        const ctx = getContext();
+        if (!ctx) return;
+        const now = ctx.currentTime;
+
+        const jitter = (Math.random() - 0.5) * 80;
+        const osc = ctx.createOscillator();
+        const filter = ctx.createBiquadFilter();
+        const gain = ctx.createGain();
+
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(820 + jitter, now);
+        osc.frequency.exponentialRampToValueAtTime(240, now + 0.024);
+
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(1500, now);
+        filter.Q.setValueAtTime(2.5, now);
+
+        gain.gain.setValueAtTime(0.001, now);
+        gain.gain.linearRampToValueAtTime(0.035, now + 0.003);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.026);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.03);
+      }
+
+      // Harmonic chime for copy, resume download, form submit
+      function playChime(isAscending = true) {
+        if (!soundEnabled) return;
+        const ctx = getContext();
+        if (!ctx) return;
+        const now = ctx.currentTime;
+
+        const tones = isAscending ? [659.25, 987.77] : [987.77, 659.25];
+        tones.forEach((freq, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          const startTime = now + idx * 0.075;
+          const duration = 0.28;
+
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, startTime);
+
+          gain.gain.setValueAtTime(0.0001, startTime);
+          gain.gain.linearRampToValueAtTime(0.06, startTime + 0.012);
+          gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(startTime);
+          osc.stop(startTime + duration + 0.02);
+        });
+      }
+
+      return {
+        init,
+        toggle,
+        set,
+        isEnabled: () => soundEnabled,
+        playHover,
+        playKey,
+        playChime
+      };
+    })();
+
+    // ==========================================
+    // 6. INTERACTIVE RETRO CLI TERMINAL
     // ==========================================
     function initTerminal() {
       const modal = document.getElementById('terminal-modal');
@@ -1917,9 +2592,20 @@
         }
       });
 
-      // Close on backdrop click
+      // Close on backdrop click & handle terminal copy links
       modal.addEventListener('click', (e) => {
         if (e.target === modal) closeTerminal();
+        const copyTarget = e.target.closest('[data-copy]');
+        if (copyTarget) {
+          e.preventDefault();
+          const val = copyTarget.getAttribute('data-copy');
+          copyToClipboard(val, `✓ Copied ${val} to clipboard!`);
+          const line = document.createElement('div');
+          line.className = 'terminal-line';
+          line.innerHTML = `<span class="term-green">✓ Copied to clipboard:</span> <span class="term-cyan">${escapeHTML(val)}</span>`;
+          history.appendChild(line);
+          termBody.scrollTop = termBody.scrollHeight;
+        }
       });
 
       // Global keyboard shortcuts: ` or ~ toggles, ESC closes, Ctrl+K toggles
@@ -1950,6 +2636,8 @@
   <div><span class="term-cyan">education</span></div><div>IIIT Gwalior GPA, coursework &amp; schooling</div>
   <div><span class="term-cyan">contact</span></div><div>Email, phone, LinkedIn &amp; GitHub links</div>
   <div><span class="term-cyan">resume</span> / <span class="term-cyan">cv</span></div><div>Preview &amp; download Samad's official resume (PDF)</div>
+  <div><span class="term-cyan">copy &lt;item&gt;</span></div><div>Copy <span class="term-accent">email</span> or <span class="term-cyan">phone</span> to clipboard</div>
+  <div><span class="term-cyan">sound [on|off]</span></div><div>Toggle synthesized UI audio haptics (or <span class="term-accent">sfx</span>)</div>
   <div><span class="term-cyan">hire</span></div><div>Direct contact / recruiter fast-track</div>
   <div><span class="term-cyan">theme &lt;color&gt;</span></div><div>Switch live theme (<span class="term-accent">yellow</span>, <span class="term-green">red</span>, <span class="term-cyan">blue</span>)</div>
   <div><span class="term-cyan">clear</span></div><div>Clear terminal history</div>
@@ -2019,19 +2707,43 @@
 
         contact: () => `
 <div class="term-accent">LET'S CONNECT:</div>
-<div>📧 Email:    <a href="mailto:Samadkhan946148@gmail.com">Samadkhan946148@gmail.com</a></div>
-<div>📞 Phone:    <a href="tel:+916395280880">+91 6395280880</a></div>
-<div>💼 LinkedIn: <a href="https://www.linkedin.com/in/samad-khan-39ba42214" target="_blank">linkedin.com/in/samad-khan-39ba42214</a></div>
-<div>🐙 GitHub:   <a href="https://github.com/samyiiitm63952" target="_blank">github.com/samyiiitm63952</a></div>
+<div>📧 Email:    <span class="term-copy-link" data-copy="Samadkhan946148@gmail.com" title="Click to copy email">Samadkhan946148@gmail.com</span> <span class="term-muted">[click to copy]</span></div>
+<div>📞 Phone:    <span class="term-copy-link" data-copy="+91 6395280880" title="Click to copy phone">+91 6395280880</span> <span class="term-muted">[click to copy]</span></div>
+<div>💼 LinkedIn: <a href="https://www.linkedin.com/in/samad-khan-39ba42214" target="_blank">linkedin.com/in/samad-khan-39ba42214 ↗</a></div>
+<div>🐙 GitHub:   <a href="https://github.com/samyiiitm63952" target="_blank">github.com/samyiiitm63952 ↗</a></div>
 <div>📍 Location: Meerut, Uttar Pradesh, India</div>`,
 
         hire: () => {
+          copyToClipboard("Samadkhan946148@gmail.com", "✓ Copied Samadkhan946148@gmail.com to clipboard!");
           setTimeout(() => {
             window.location.href = "mailto:Samadkhan946148@gmail.com?subject=Opportunity%20for%20Samad%20Khan%20%E2%80%94%20Software%20Engineer&body=Hi%20Samad%2C%0A%0AI%20came%20across%20your%20portfolio%20and%20would%20love%20to%20discuss%20an%20opportunity%20with%20you.%0A%0ABest%20regards%2C";
-          }, 800);
+          }, 600);
           return `<div class="term-green">🚀 INITIATING HIRE PROTOCOL...</div>
-<div>Opening your mail client to <span class="term-accent">Samadkhan946148@gmail.com</span>...</div>
-<div class="term-muted">If your mail app didn't open automatically, write directly to Samadkhan946148@gmail.com</div>`;
+<div>Copied <span class="term-accent">Samadkhan946148@gmail.com</span> to clipboard &amp; opening mail client...</div>
+<div class="term-muted">Tip: Paste directly into your recruiter message or ATS.</div>`;
+        },
+
+        copy: (arg) => {
+          const target = (arg || '').toLowerCase().trim();
+          if (target === 'phone' || target === 'tel') {
+            copyToClipboard("+91 6395280880", "✓ Copied +91 6395280880 to clipboard!");
+            return `<div class="term-green">✓ Copied phone (+91 6395280880) to clipboard!</div>`;
+          }
+          copyToClipboard("Samadkhan946148@gmail.com", "✓ Copied Samadkhan946148@gmail.com to clipboard!");
+          return `<div class="term-green">✓ Copied email (Samadkhan946148@gmail.com) to clipboard!</div>`;
+        },
+
+        sound: (arg) => {
+          const target = (arg || '').toLowerCase().trim();
+          if (target === 'on' || target === 'enable' || target === '1') {
+            soundManager.set(true);
+            return `<div class="term-green">🔊 Sound effects enabled.</div>`;
+          } else if (target === 'off' || target === 'mute' || target === '0') {
+            soundManager.set(false);
+            return `<div class="term-muted">🔇 Sound effects muted.</div>`;
+          }
+          const newState = soundManager.toggle();
+          return `<div class="term-accent">Audio haptics toggled: <span class="${newState ? 'term-green' : 'term-muted'}">${newState ? 'ON 🔊' : 'OFF 🔇'}</span></div>`;
         },
 
         sudo: () => `<div class="term-accent">[sudo] password for recruiter:</div><div>Permission denied: Samad is already root of this portfolio system 😉</div>`,
@@ -2060,6 +2772,8 @@
       COMMANDS.quit = COMMANDS.exit;
       COMMANDS.edu = COMMANDS.education;
       COMMANDS.achievements = COMMANDS.awards;
+      COMMANDS.audio = COMMANDS.sound;
+      COMMANDS.sfx = COMMANDS.sound;
 
       function executeCommand(raw) {
         const cmd = raw.trim();
@@ -2093,7 +2807,7 @@
             appendOutput(`<div class="term-muted">Usage: theme &lt;yellow | red | blue&gt;</div>`);
           }
         } else if (COMMANDS[action]) {
-          const res = COMMANDS[action]();
+          const res = COMMANDS[action](arg);
           if (res !== null) appendOutput(res);
         } else {
           appendOutput(`<div class="term-muted">Command not found: "${escapeHTML(action)}". Type <span class="term-accent">help</span> for available commands.</div>`);
@@ -2117,6 +2831,7 @@
 
       // Input listener
       input.addEventListener('keydown', (e) => {
+        if (typeof soundManager !== 'undefined') soundManager.playKey();
         if (e.key === 'Enter') {
           const val = input.value;
           input.value = '';
@@ -2149,6 +2864,8 @@
     // Contact form
     function handleFormSubmit(e) {
       e.preventDefault();
+      if (typeof soundManager !== 'undefined') soundManager.playChime(true);
+      showToast("✓ Opening your mail client to Samad...", "Message Sent");
       const btn = document.getElementById('submit-btn');
       const name = document.getElementById('f-name').value;
       const email = document.getElementById('f-email').value;
@@ -2328,9 +3045,12 @@
     async function init() {
       resize();
       initLenis();
+      init3DTilt();
       initMagnetic();
       initTextScramble();
+      initCopyEngine();
       initTerminal();
+      soundManager.init();
       setTimeout(() => {
         heroIntro.classList.add('hero-intro-visible');
         const greeting = heroIntro.querySelector('.hero-greeting');
