@@ -6,8 +6,29 @@
   <title>Samad Khan — Software Engineer</title>
   <meta name="description" content="Samad Khan — Aspiring Software Engineer at IIIT Gwalior. Full-stack developer with expertise in React.js, Node.js, and scalable web applications. 450+ DSA problems solved." />
   <meta name="keywords" content="Samad Khan, Software Engineer, IIIT Gwalior, React, Node.js, Full Stack Developer, Portfolio" />
+  <meta name="author" content="Samad Khan" />
+  <meta name="theme-color" content="#050505" />
+
+  <!-- CUSTOM GEOMETRIC SK MONOGRAM FAVICON -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="alternate icon" type="image/svg+xml" href="favicon.svg" />
+
+  <!-- SEO & SOCIAL SHARE PREVIEW (OPEN GRAPH) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Samad Khan Portfolio" />
   <meta property="og:title" content="Samad Khan — Software Engineer" />
-  <meta property="og:description" content="Aspiring Software Engineer with 450+ DSA problems solved. Expert in full-stack web development." />
+  <meta property="og:description" content="Aspiring Software Engineer at IIIT Gwalior. Full-stack developer with expertise in React.js, Node.js, and scalable web applications. 450+ DSA problems solved." />
+  <meta property="og:image" content="assets/og_card.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Samad Khan — Software Engineer Portfolio Hero Snapshot" />
+
+  <!-- TWITTER / X CARD -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Samad Khan — Software Engineer" />
+  <meta name="twitter:description" content="Aspiring Software Engineer at IIIT Gwalior. Full-stack developer with expertise in React.js, Node.js, and scalable web applications. 450+ DSA problems solved." />
+  <meta name="twitter:image" content="assets/og_card.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
@@ -102,6 +123,40 @@
     .btn-primary:hover { filter:brightness(1.2); transform:translateY(-2px); }
     .btn-secondary { display:inline-flex;align-items:center;gap:8px;padding:13px 28px;background:transparent;color:rgba(255,255,255,0.7);font-size:0.85rem;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;border:1px solid rgba(255,255,255,0.2);cursor:pointer;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);transition:border-color 0.3s,color 0.3s,transform 0.2s;pointer-events:all; }
     .btn-secondary:hover { border-color:var(--gold); color:#fff; transform:translateY(-2px); }
+    .btn-resume {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 26px;
+      background: rgba(240, 165, 0, 0.12);
+      color: #fff;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      text-decoration: none;
+      border: 1px solid rgba(240, 165, 0, 0.45);
+      cursor: pointer;
+      clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+      transition: all 0.3s ease;
+      pointer-events: all;
+      position: relative;
+    }
+    .btn-resume svg {
+      color: var(--gold);
+      transition: transform 0.2s ease, color 0.3s ease;
+    }
+    .btn-resume:hover {
+      background: var(--gold);
+      color: #000;
+      border-color: var(--gold);
+      transform: translateY(-2px);
+      box-shadow: 0 0 20px rgba(240, 165, 0, 0.4);
+    }
+    .btn-resume:hover svg {
+      color: #000;
+      transform: translateY(2px);
+    }
 
     /* SCROLL PANELS */
     #scroll-left-panel, #scroll-right-panel {
@@ -548,7 +603,57 @@
     .nav-right {
       display: flex;
       align-items: center;
-      gap: 28px;
+      gap: 20px;
+    }
+    .nav-resume-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 14px;
+      background: rgba(240, 165, 0, 0.08);
+      border: 1px solid rgba(240, 165, 0, 0.35);
+      border-radius: 999px;
+      color: rgba(255, 255, 255, 0.9);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      text-decoration: none;
+      backdrop-filter: blur(10px);
+      transition: all 0.25s ease;
+      cursor: pointer;
+      user-select: none;
+    }
+    .nav-resume-btn svg {
+      color: var(--gold);
+      transition: transform 0.2s ease, color 0.25s ease;
+    }
+    .nav-resume-btn:hover {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: #000;
+      box-shadow: 0 0 20px rgba(240, 165, 0, 0.35);
+      transform: translateY(-1px);
+    }
+    .nav-resume-btn:hover svg {
+      color: #000;
+      transform: translateY(1.5px);
+    }
+    body.post-hero-blue .nav-resume-btn {
+      border-color: rgba(58, 155, 220, 0.4);
+      background: rgba(58, 155, 220, 0.08);
+    }
+    body.post-hero-blue .nav-resume-btn svg {
+      color: #3a9bdc;
+    }
+    body.post-hero-blue .nav-resume-btn:hover {
+      background: #3a9bdc;
+      border-color: #3a9bdc;
+      color: #000;
+      box-shadow: 0 0 20px rgba(58, 155, 220, 0.4);
+    }
+    body.post-hero-blue .nav-resume-btn:hover svg {
+      color: #000;
     }
     .terminal-pill {
       display: inline-flex;
@@ -846,6 +951,8 @@
     @media (max-width:900px) {
       nav { padding:16px 24px; }
       .nav-links { display:none; }
+      .nav-right { gap: 12px; }
+      .hero-cta { flex-wrap: wrap; }
       section { padding:80px 6vw; }
       .about-grid,.contact-grid { grid-template-columns:1fr;gap:40px; }
       .projects-grid { grid-template-columns:1fr; }
@@ -884,6 +991,16 @@
         <li><a href="#education" class="magnetic">Education</a></li>
         <li><a href="#contact" class="magnetic">Contact</a></li>
       </ul>
+      <a href="resume.pdf" target="_blank" download="Samad_Khan_Resume.pdf" class="nav-resume-btn magnetic" title="Preview or Download Resume / CV">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="12" y1="18" x2="12" y2="12"></line>
+          <line x1="9" y1="15" x2="12" y2="18"></line>
+          <line x1="15" y1="15" x2="12" y2="18"></line>
+        </svg>
+        <span>Resume / CV</span>
+      </a>
       <button id="terminal-trigger" class="terminal-pill magnetic" aria-label="Open Interactive Terminal" title="Terminal CLI (Press ` or ~)">
         <span class="terminal-pill-dots">
           <span class="dot red"></span>
@@ -913,6 +1030,16 @@
             View Projects
           </a>
           <a href="#contact" class="btn-secondary magnetic">Let's Talk</a>
+          <a href="resume.pdf" target="_blank" download="Samad_Khan_Resume.pdf" class="btn-resume magnetic" title="Preview or Download Samad Khan's Resume / CV">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="12" y1="18" x2="12" y2="12"></line>
+              <line x1="9" y1="15" x2="12" y2="18"></line>
+              <line x1="15" y1="15" x2="12" y2="18"></line>
+            </svg>
+            Resume / CV
+          </a>
         </div>
       </div>
 
@@ -1568,7 +1695,7 @@
     const magneticItems = [];
     function initMagnetic() {
       const targets = document.querySelectorAll(
-        '.magnetic, .btn-primary, .btn-secondary, .nav-links a, .nav-logo, .terminal-pill, .form-submit, .project-link.live-link, .leetcode-profile-btn, .footer-terminal-link'
+        '.magnetic, .btn-primary, .btn-secondary, .btn-resume, .nav-resume-btn, .nav-links a, .nav-logo, .terminal-pill, .form-submit, .project-link.live-link, .leetcode-profile-btn, .footer-terminal-link'
       );
       targets.forEach(el => {
         if (!el._hasMagnetic) {
@@ -1822,6 +1949,7 @@
   <div><span class="term-cyan">awards</span></div><div>National Hackathon 1st Runner-Up &amp; LeetCode medals</div>
   <div><span class="term-cyan">education</span></div><div>IIIT Gwalior GPA, coursework &amp; schooling</div>
   <div><span class="term-cyan">contact</span></div><div>Email, phone, LinkedIn &amp; GitHub links</div>
+  <div><span class="term-cyan">resume</span> / <span class="term-cyan">cv</span></div><div>Preview &amp; download Samad's official resume (PDF)</div>
   <div><span class="term-cyan">hire</span></div><div>Direct contact / recruiter fast-track</div>
   <div><span class="term-cyan">theme &lt;color&gt;</span></div><div>Switch live theme (<span class="term-accent">yellow</span>, <span class="term-green">red</span>, <span class="term-cyan">blue</span>)</div>
   <div><span class="term-cyan">clear</span></div><div>Clear terminal history</div>
@@ -1913,6 +2041,11 @@
           history.innerHTML = '';
           return null;
         },
+        resume: () => {
+          window.open('resume.pdf', '_blank');
+          return `<div class="term-green">✓ Opening Samad Khan's Resume (PDF) in a new tab...</div>
+<div>Direct link: <a href="resume.pdf" download="Samad_Khan_Resume.pdf" class="term-cyan" style="text-decoration:underline;">Download resume.pdf</a></div>`;
+        },
         exit: () => {
           closeTerminal();
           return `<div>Terminal closed. Press \` to reopen.</div>`;
@@ -1922,6 +2055,7 @@
       // Aliases
       COMMANDS.bio = COMMANDS.about;
       COMMANDS.stack = COMMANDS.skills;
+      COMMANDS.cv = COMMANDS.resume;
       COMMANDS.cls = COMMANDS.clear;
       COMMANDS.quit = COMMANDS.exit;
       COMMANDS.edu = COMMANDS.education;
