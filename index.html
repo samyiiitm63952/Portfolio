@@ -11,6 +11,15 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <!-- LENIS SMOOTH SCROLL -->
+  <script src="assets/lenis.min.js"></script>
+  <script>
+    if (typeof Lenis === 'undefined') {
+      const s = document.createElement('script');
+      s.src = 'https://unpkg.com/lenis@1.1.20/dist/lenis.min.js';
+      document.head.appendChild(s);
+    }
+  </script>
   <style>
     :root {
       --gold: #f0a500;
@@ -25,6 +34,13 @@
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: smooth; }
     body { background: var(--bg); color: var(--text); font-family: 'Outfit', sans-serif; overflow-x: hidden; }
+
+    /* LENIS SMOOTH SCROLL INTEGRATION */
+    html.lenis, html.lenis body { height: auto; }
+    .lenis.lenis-smooth { scroll-behavior: auto !important; }
+    .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+    .lenis.lenis-stopped { overflow: hidden; }
+    .lenis.lenis-scrolling iframe { pointer-events: none; }
 
     /* LOADER */
     #loader {
@@ -184,11 +200,125 @@
     .project-desc { font-size:0.9rem; color:rgba(255,255,255,0.55); line-height:1.7; margin-bottom:24px; }
     .project-tech { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:28px; }
     .tech-badge { padding:3px 10px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); font-size:0.7rem; color:rgba(255,255,255,0.6); border-radius:2px; letter-spacing:0.5px; }
-    .project-links { display:flex; gap:12px; align-items:center; }
+    .project-links { display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
     .project-link { display:inline-flex;align-items:center;gap:6px;color:var(--gold);text-decoration:none;font-size:0.8rem;letter-spacing:1px;text-transform:uppercase;font-family:'Space Mono',monospace;transition:opacity 0.2s,color 0.5s; }
     .project-link:hover { opacity:0.7; }
-    .project-visual { background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); border-radius:4px; height:220px; display:flex;align-items:center;justify-content:center;font-size:4rem;position:relative;overflow:hidden; }
-    .project-visual::after { content:''; position:absolute;inset:0;background:radial-gradient(circle at center,rgba(58,155,220,0.06) 0%,transparent 70%); }
+    .project-link.live-link {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 14px;
+      background: rgba(58, 155, 220, 0.12);
+      border: 1px solid rgba(58, 155, 220, 0.35);
+      border-radius: 2px;
+      color: #fff;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    .project-link.live-link:hover {
+      background: var(--gold);
+      color: #000;
+      border-color: var(--gold);
+      opacity: 1;
+      transform: translateY(-2px);
+    }
+    .live-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 8px #22c55e;
+      animation: livePulse 1.8s infinite;
+    }
+    @keyframes livePulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+    .project-visual { background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); border-radius:4px; height:260px; display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden; }
+    .project-visual img { width:100%; height:100%; object-fit:cover; transition:transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+    .project-card:hover .project-visual img { transform:scale(1.06); }
+    .project-visual-tag { position:absolute; bottom:12px; left:12px; background:rgba(5,5,5,0.85); backdrop-filter:blur(8px); padding:4px 10px; border-radius:2px; font-family:'Space Mono',monospace; font-size:0.65rem; color:#ffd700; border:1px solid rgba(255,215,0,0.3); z-index:2; letter-spacing:1px; }
+
+    /* LEETCODE & DSA PROOF SHOWCASE */
+    .leetcode-proof-card {
+      margin-top: 48px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      padding: 32px;
+      position: relative;
+      border-radius: 4px;
+      overflow: hidden;
+      transition: border-color 0.3s;
+    }
+    .leetcode-proof-card:hover { border-color: rgba(58,155,220,0.3); }
+    .leetcode-proof-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 2px;
+      background: linear-gradient(90deg, #ffa116, #22c55e, var(--gold));
+    }
+    .leetcode-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .leetcode-title-wrap { display: flex; align-items: center; gap: 16px; }
+    .leetcode-icon {
+      font-size: 1.8rem;
+      width: 48px; height: 48px;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(255, 161, 22, 0.1);
+      border: 1px solid rgba(255, 161, 22, 0.3);
+      border-radius: 4px;
+    }
+    .leetcode-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 4px; }
+    .leetcode-sub { font-size: 0.8rem; color: rgba(255,255,255,0.6); font-family: 'Space Mono', monospace; letter-spacing: 0.5px; }
+    .leetcode-profile-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 16px;
+      background: rgba(255, 161, 22, 0.12);
+      border: 1px solid rgba(255, 161, 22, 0.35);
+      color: #ffa116;
+      text-decoration: none;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      border-radius: 2px;
+      transition: all 0.3s;
+    }
+    .leetcode-profile-btn:hover { background: #ffa116; color: #000; }
+    .leetcode-media-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 20px; }
+    @media (max-width: 900px) { .leetcode-media-grid { grid-template-columns: 1fr; } }
+    .leetcode-media-item {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 4px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .media-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.55);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .media-label::before {
+      content: ''; width: 6px; height: 6px; border-radius: 50%; background: #22c55e;
+    }
+    .leetcode-img {
+      width: 100%;
+      height: 180px;
+      object-fit: contain;
+      background: #0d0d0d;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 8px;
+    }
 
     /* EDUCATION */
     #education { background: rgba(255,255,255,0.01); }
@@ -408,6 +538,311 @@
     /* PROGRESS */
     #progress-bar { position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,var(--gold),#ff6b00);z-index:200;width:0%;transition:width 0.1s,background 0.5s;box-shadow:0 0 8px var(--gold); }
 
+    /* MAGNETIC WRAPPER */
+    .magnetic {
+      display: inline-flex;
+      will-change: transform;
+    }
+
+    /* NAV RIGHT & TERMINAL PILL */
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+    .terminal-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 999px;
+      color: rgba(255, 255, 255, 0.85);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 1px;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      transition: background 0.25s, border-color 0.25s, box-shadow 0.25s, color 0.25s;
+      user-select: none;
+    }
+    .terminal-pill:hover {
+      background: rgba(240, 165, 0, 0.12);
+      border-color: var(--gold);
+      color: var(--gold);
+      box-shadow: 0 0 20px rgba(240, 165, 0, 0.25);
+    }
+    body.cursor-theme-red .terminal-pill:hover {
+      background: rgba(230, 57, 70, 0.15);
+      border-color: #e63946;
+      color: #e63946;
+      box-shadow: 0 0 20px rgba(230, 57, 70, 0.3);
+    }
+    body.cursor-theme-blue .terminal-pill:hover,
+    body.post-hero-blue .terminal-pill:hover {
+      background: rgba(58, 155, 220, 0.15);
+      border-color: #3a9bdc;
+      color: #3a9bdc;
+      box-shadow: 0 0 20px rgba(58, 155, 220, 0.3);
+    }
+    .terminal-pill-dots {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+    .terminal-pill-dots .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+    .terminal-pill-dots .dot.red { background: #ff5f56; }
+    .terminal-pill-dots .dot.yellow { background: #ffbd2e; }
+    .terminal-pill-dots .dot.green { background: #27c93f; }
+    .terminal-pill-prompt {
+      color: var(--gold);
+      font-weight: 700;
+      transition: color 0.4s;
+    }
+    body.cursor-theme-red .terminal-pill-prompt { color: #e63946; }
+    body.cursor-theme-blue .terminal-pill-prompt,
+    body.post-hero-blue .terminal-pill-prompt { color: #3a9bdc; }
+    .terminal-pill-label {
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.7rem;
+    }
+    .terminal-pill-key {
+      padding: 1px 5px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 3px;
+      font-size: 0.6rem;
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    /* FOOTER TERMINAL LINK */
+    .footer-terminal-link {
+      background: transparent;
+      border: none;
+      color: rgba(255, 255, 255, 0.4);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.3s;
+    }
+    .footer-terminal-link:hover {
+      color: var(--gold);
+    }
+
+    /* TERMINAL MODAL & CYBERPUNK HUD */
+    #terminal-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 99990;
+      background: rgba(0, 0, 0, 0.78);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      padding: 20px;
+    }
+    #terminal-modal.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .terminal-window {
+      width: min(860px, 94vw);
+      height: min(540px, 82vh);
+      background: #080a0e;
+      border: 1px solid rgba(240, 165, 0, 0.4);
+      border-radius: 8px;
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.95), 0 0 35px rgba(240, 165, 0, 0.15);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transform: scale(0.94) translateY(20px);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease, box-shadow 0.4s ease;
+      position: relative;
+    }
+    #terminal-modal.active .terminal-window {
+      transform: scale(1) translateY(0);
+    }
+    body.cursor-theme-red .terminal-window {
+      border-color: rgba(230, 57, 70, 0.45);
+      box-shadow: 0 25px 70px rgba(0,0,0,0.95), 0 0 35px rgba(230, 57, 70, 0.18);
+    }
+    body.cursor-theme-blue .terminal-window,
+    body.post-hero-blue .terminal-window {
+      border-color: rgba(58, 155, 220, 0.45);
+      box-shadow: 0 25px 70px rgba(0,0,0,0.95), 0 0 35px rgba(58, 155, 220, 0.18);
+    }
+
+    .terminal-header {
+      height: 42px;
+      background: rgba(255, 255, 255, 0.03);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      user-select: none;
+    }
+    .terminal-controls {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .term-btn {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 8px;
+      color: rgba(0,0,0,0.6);
+      transition: opacity 0.2s;
+    }
+    .term-btn:hover { opacity: 0.85; }
+    .term-btn.term-close { background: #ff5f56; }
+    .term-btn.term-min { background: #ffbd2e; }
+    .term-btn.term-max { background: #27c93f; }
+    .terminal-title {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 1px;
+      color: rgba(255, 255, 255, 0.55);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .terminal-title .host { color: var(--gold); }
+    body.cursor-theme-red .terminal-title .host { color: #e63946; }
+    body.cursor-theme-blue .terminal-title .host,
+    body.post-hero-blue .terminal-title .host { color: #3a9bdc; }
+
+    .terminal-hint {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem;
+      color: rgba(255, 255, 255, 0.35);
+      letter-spacing: 1px;
+    }
+    .terminal-body {
+      flex: 1;
+      padding: 20px 22px;
+      overflow-y: auto;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.82rem;
+      line-height: 1.65;
+      color: #e5e5e5;
+      position: relative;
+    }
+    .terminal-body::-webkit-scrollbar {
+      width: 6px;
+    }
+    .terminal-body::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 3px;
+    }
+    .terminal-banner {
+      color: var(--gold);
+      margin-bottom: 18px;
+      white-space: pre-wrap;
+      line-height: 1.45;
+      font-size: 0.75rem;
+      border-left: 2px solid var(--gold);
+      padding-left: 14px;
+      transition: color 0.4s, border-color 0.4s;
+    }
+    body.cursor-theme-red .terminal-banner { color: #e63946; border-color: #e63946; }
+    body.cursor-theme-blue .terminal-banner,
+    body.post-hero-blue .terminal-banner { color: #3a9bdc; border-color: #3a9bdc; }
+
+    .terminal-history {
+      margin-bottom: 12px;
+    }
+    .terminal-line {
+      margin-bottom: 8px;
+      word-break: break-word;
+    }
+    .terminal-line.cmd-echo {
+      color: rgba(255, 255, 255, 0.65);
+      display: flex;
+      gap: 8px;
+    }
+    .terminal-line.cmd-echo .p-label {
+      color: #22c55e;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .terminal-line.cmd-echo .p-cmd {
+      color: #fff;
+      font-weight: 600;
+    }
+    .terminal-line a {
+      color: #3a9bdc;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      transition: color 0.2s;
+    }
+    .terminal-line a:hover {
+      color: #60a5fa;
+    }
+    .term-accent { color: var(--gold); font-weight: 700; }
+    .term-green { color: #22c55e; }
+    .term-cyan { color: #38bdf8; }
+    .term-muted { color: rgba(255, 255, 255, 0.45); }
+    .term-table {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 6px 16px;
+      margin: 8px 0 12px;
+      padding: 8px 12px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 4px;
+    }
+    @media (max-width: 600px) {
+      .term-table { grid-template-columns: 1fr; gap: 4px; }
+    }
+    .terminal-prompt-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .terminal-prompt-label {
+      color: #22c55e;
+      font-weight: 700;
+      white-space: nowrap;
+      user-select: none;
+    }
+    .terminal-input-wrap {
+      flex: 1;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    #terminal-input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #fff;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.82rem;
+      caret-color: var(--gold);
+    }
+
     @media (max-width:900px) {
       nav { padding:16px 24px; }
       .nav-links { display:none; }
@@ -440,14 +875,26 @@
 
   <!-- NAV -->
   <nav id="navbar">
-    <a href="#" class="nav-logo">SK</a>
-    <ul class="nav-links">
-      <li><a href="#about">About</a></li>
-      <li><a href="#skills">Skills</a></li>
-      <li><a href="#projects">Projects</a></li>
-      <li><a href="#education">Education</a></li>
-      <li><a href="#contact">Contact</a></li>
-    </ul>
+    <a href="#" class="nav-logo magnetic">SK</a>
+    <div class="nav-right">
+      <ul class="nav-links">
+        <li><a href="#about" class="magnetic">About</a></li>
+        <li><a href="#skills" class="magnetic">Skills</a></li>
+        <li><a href="#projects" class="magnetic">Projects</a></li>
+        <li><a href="#education" class="magnetic">Education</a></li>
+        <li><a href="#contact" class="magnetic">Contact</a></li>
+      </ul>
+      <button id="terminal-trigger" class="terminal-pill magnetic" aria-label="Open Interactive Terminal" title="Terminal CLI (Press ` or ~)">
+        <span class="terminal-pill-dots">
+          <span class="dot red"></span>
+          <span class="dot yellow"></span>
+          <span class="dot green"></span>
+        </span>
+        <span class="terminal-pill-prompt">&gt;_</span>
+        <span class="terminal-pill-label">CLI</span>
+        <span class="terminal-pill-key">`</span>
+      </button>
+    </div>
   </nav>
 
   <!-- HERO -->
@@ -461,11 +908,11 @@
         <h1 class="hero-name">Samad<br /><span>Khan</span></h1>
         <div class="hero-role">Software Engineer · Full-Stack Developer · DSA Enthusiast</div>
         <div class="hero-cta">
-          <a href="#projects" class="btn-primary">
+          <a href="#projects" class="btn-primary magnetic">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
             View Projects
           </a>
-          <a href="#contact" class="btn-secondary">Let's Talk</a>
+          <a href="#contact" class="btn-secondary magnetic">Let's Talk</a>
         </div>
       </div>
 
@@ -517,18 +964,18 @@
         <p class="reveal reveal-delay-2">My passion lies at the intersection of <strong>algorithms and beautiful interfaces</strong>. I've solved <strong>450+ DSA problems</strong> across platforms while simultaneously building production-ready full-stack applications with payment gateways, real-time features, and complex auth systems.</p>
         <p class="reveal reveal-delay-3">Beyond code, I'm a <strong>guitarist, filmmaker</strong>, and active contributor to my college's cultural and technical communities. I believe great engineers are also great storytellers.</p>
         <div class="hero-cta reveal reveal-delay-4" style="margin-top:0">
-          <a href="mailto:Samadkhan946148@gmail.com" class="btn-primary">
+          <a href="mailto:Samadkhan946148@gmail.com" class="btn-primary magnetic">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,12 2,6"/></svg>
             Get In Touch
           </a>
-          <a href="https://github.com/samyiiitm63952" target="_blank" rel="noopener" class="btn-secondary">GitHub ↗</a>
+          <a href="https://github.com/samyiiitm63952" target="_blank" rel="noopener" class="btn-secondary magnetic">GitHub ↗</a>
         </div>
       </div>
       <div class="about-stats">
-        <div class="stat-card reveal reveal-delay-1"><div class="stat-number">450+</div><div class="stat-label">DSA Problems Solved</div></div>
-        <div class="stat-card reveal reveal-delay-2"><div class="stat-number">8.20</div><div class="stat-label">CGPA at IIIT Gwalior</div></div>
-        <div class="stat-card reveal reveal-delay-3"><div class="stat-number">4</div><div class="stat-label">Production Projects</div></div>
-        <div class="stat-card reveal reveal-delay-4"><div class="stat-number">₹75K</div><div class="stat-label">Hackathon Prize Won</div></div>
+        <div class="stat-card reveal reveal-delay-1"><div class="stat-number">1,287+</div><div class="stat-label">LeetCode Submissions</div></div>
+        <div class="stat-card reveal reveal-delay-2"><div class="stat-number">117</div><div class="stat-label">Days Max Streak (208 Active)</div></div>
+        <div class="stat-card reveal reveal-delay-3"><div class="stat-number">₹75K</div><div class="stat-label">National Hackathon 1st Runner Up</div></div>
+        <div class="stat-card reveal reveal-delay-4"><div class="stat-number">8.20</div><div class="stat-label">CGPA at IIIT Gwalior</div></div>
       </div>
     </div>
   </section>
@@ -595,6 +1042,33 @@
         </div>
       </div>
     </div>
+
+    <!-- LEETCODE & COMPETITIVE PROGRAMMING PROOF -->
+    <div class="leetcode-proof-card reveal">
+      <div class="leetcode-header">
+        <div class="leetcode-title-wrap">
+          <div class="leetcode-icon">⚡</div>
+          <div>
+            <h3 class="leetcode-title">Problem Solving &amp; Algorithmic Consistency</h3>
+            <div class="leetcode-sub">1,287+ Submissions · 208 Active Days · 117-Day Daily Streak · 200 Days Badge</div>
+          </div>
+        </div>
+        <a href="https://github.com/samyiiitm63952" target="_blank" rel="noopener" class="leetcode-profile-btn magnetic">
+          <span>Verified DSA Record</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+        </a>
+      </div>
+      <div class="leetcode-media-grid">
+        <div class="leetcode-media-item">
+          <div class="media-label">Activity Heatmap · 1,287 Submissions in Past Year</div>
+          <img src="assets/leetcode_heatmap.png" alt="LeetCode 1,287 Submissions Heatmap" class="leetcode-img">
+        </div>
+        <div class="leetcode-media-item">
+          <div class="media-label">Official Medals · 200 Days, 100 Days &amp; Monthly Badges</div>
+          <img src="assets/leetcode_badges.png" alt="LeetCode Annual and Monthly Badges" class="leetcode-img">
+        </div>
+      </div>
+    </div>
   </section>
 
   <!-- PROJECTS -->
@@ -605,31 +1079,38 @@
 
       <div class="project-card featured reveal">
         <div>
-          <div class="project-badge winner">🏆 2nd Place · National Indux 5.0 · ₹75,000</div>
+          <div class="project-badge winner">🏆 1st Runner-Up · National Indux 5.0 · ₹75,000</div>
           <h3 class="project-title">Smart Production Line Monitoring System</h3>
           <p class="project-desc">An IoT-based predictive maintenance system for industrial conveyor belts using vibration, temperature, load, and alignment sensors. Real-time edge monitoring with intelligent fault alerts for belt slippage, bearing failures, and motor faults — preventing costly industrial downtime.</p>
           <div class="project-tech">
             <span class="tech-badge">IoT</span><span class="tech-badge">Edge Computing</span><span class="tech-badge">Sensor Fusion</span><span class="tech-badge">Predictive ML</span><span class="tech-badge">Real-time Monitoring</span>
           </div>
           <div class="project-links">
-            <a href="https://github.com/samyiiitm63952" target="_blank" class="project-link">
+            <a href="https://github.com/samyiiitm63952" target="_blank" rel="noopener" class="project-link">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.11.82-.26.82-.58v-2.17c-3.34.73-4.04-1.61-4.04-1.61-.54-1.38-1.33-1.74-1.33-1.74-1.09-.74.08-.73.08-.73 1.2.09 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.49 1 .1-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4c1.02.005 2.04.14 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.82 1.1.82 2.22v3.29c0 .32.22.7.83.58C20.57 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg>
               GitHub
             </a>
           </div>
         </div>
-        <div class="project-visual">🏭</div>
+        <div class="project-visual">
+          <img src="assets/hackathon_award.jpg" alt="Samad Khan holding ₹75,000 Cheque at Indux 5.0 National Hackathon" />
+          <div class="project-visual-tag">🏆 ₹75,000 Award Ceremony</div>
+        </div>
       </div>
 
       <div class="project-card reveal reveal-delay-1">
-        <div class="project-badge">Full-Stack Web App</div>
+        <div class="project-badge">Full-Stack Web App · Live</div>
         <h3 class="project-title">Get Me Funding</h3>
-        <p class="project-desc">A crowdfunding platform with secure NextAuth authentication, Razorpay payment gateway, campaign creation, pledge management, and real-time funding progress tracking.</p>
+        <p class="project-desc">A crowdfunding platform for creators ("Buy me a Chai") with secure NextAuth authentication, Razorpay payment gateway integration, campaign creation, pledge management, and real-time funding progress.</p>
         <div class="project-tech">
           <span class="tech-badge">Next.js</span><span class="tech-badge">MongoDB</span><span class="tech-badge">Express.js</span><span class="tech-badge">NextAuth</span><span class="tech-badge">Razorpay</span>
         </div>
         <div class="project-links">
-          <a href="https://github.com/samyiiitm63952" target="_blank" class="project-link">
+          <a href="https://get-me-funding.vercel.app/" target="_blank" rel="noopener" class="project-link live-link">
+            <span class="live-dot"></span>
+            Live Demo ↗
+          </a>
+          <a href="https://github.com/samyiiitm63952" target="_blank" rel="noopener" class="project-link">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.11.82-.26.82-.58v-2.17c-3.34.73-4.04-1.61-4.04-1.61-.54-1.38-1.33-1.74-1.33-1.74-1.09-.74.08-.73.08-.73 1.2.09 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.49 1 .1-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4c1.02.005 2.04.14 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.82 1.1.82 2.22v3.29c0 .32.22.7.83.58C20.57 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg>
             GitHub
           </a>
@@ -637,14 +1118,18 @@
       </div>
 
       <div class="project-card reveal reveal-delay-2">
-        <div class="project-badge">Production App</div>
+        <div class="project-badge">Production App · Live</div>
         <h3 class="project-title">Full-Stack Job Portal</h3>
-        <p class="project-desc">Feature-rich job portal with recruiter/candidate roles, JWT auth, job posting, applications, resume uploads via Multer, advanced search, and Sentry error monitoring for production reliability.</p>
+        <p class="project-desc">Production job portal with recruiter/candidate roles, JWT auth, job posting, applications, resume uploads via Multer, advanced search filtering, and Sentry error monitoring for enterprise reliability.</p>
         <div class="project-tech">
           <span class="tech-badge">React.js</span><span class="tech-badge">Node.js</span><span class="tech-badge">MongoDB</span><span class="tech-badge">Multer</span><span class="tech-badge">Sentry</span><span class="tech-badge">JWT</span>
         </div>
         <div class="project-links">
-          <a href="https://github.com/samyiiitm63952" target="_blank" class="project-link">
+          <a href="https://job-portal-pi-ebon.vercel.app/" target="_blank" rel="noopener" class="project-link live-link">
+            <span class="live-dot"></span>
+            Live Demo ↗
+          </a>
+          <a href="https://github.com/samyiiitm63952" target="_blank" rel="noopener" class="project-link">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.11.82-.26.82-.58v-2.17c-3.34.73-4.04-1.61-4.04-1.61-.54-1.38-1.33-1.74-1.33-1.74-1.09-.74.08-.73.08-.73 1.2.09 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.49 1 .1-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4c1.02.005 2.04.14 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.82 1.1.82 2.22v3.29c0 .32.22.7.83.58C20.57 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg>
             GitHub
           </a>
@@ -742,7 +1227,7 @@
         <div class="form-group"><label class="form-label" for="f-email">Email Address</label><input id="f-email" type="email" class="form-input" placeholder="john@example.com" required /></div>
         <div class="form-group"><label class="form-label" for="f-subject">Subject</label><input id="f-subject" type="text" class="form-input" placeholder="Project Collaboration / Internship / Just Hi!" /></div>
         <div class="form-group"><label class="form-label" for="f-message">Message</label><textarea id="f-message" class="form-textarea" placeholder="Tell me about your project or opportunity..." required></textarea></div>
-        <button type="submit" class="form-submit" id="submit-btn">
+        <button type="submit" class="form-submit magnetic" id="submit-btn">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
           Send Message
         </button>
@@ -754,15 +1239,45 @@
   <footer>
     <div class="footer-name">© 2025 · Samad Khan</div>
     <div class="footer-links">
-      <a href="https://github.com/samyiiitm63952" target="_blank">GitHub</a>
-      <a href="https://www.linkedin.com/in/samad-khan-39ba42214" target="_blank">LinkedIn</a>
-      <a href="mailto:Samadkhan946148@gmail.com">Email</a>
+      <a href="https://github.com/samyiiitm63952" target="_blank" class="magnetic">GitHub</a>
+      <a href="https://www.linkedin.com/in/samad-khan-39ba42214" target="_blank" class="magnetic">LinkedIn</a>
+      <a href="mailto:Samadkhan946148@gmail.com" class="magnetic">Email</a>
+      <button id="footer-terminal-btn" class="footer-terminal-link magnetic" title="Open Interactive CLI Terminal">&gt;_ CLI Terminal</button>
     </div>
   </footer>
 
+  <!-- TERMINAL MODAL -->
+  <div id="terminal-modal" data-lenis-prevent role="dialog" aria-modal="true" aria-label="Interactive Terminal CLI">
+    <div class="terminal-window">
+      <div class="terminal-header">
+        <div class="terminal-controls">
+          <button class="term-btn term-close" id="term-close-btn" aria-label="Close Terminal" title="Close (ESC)"></button>
+          <button class="term-btn term-min" id="term-min-btn" aria-label="Minimize Terminal" title="Minimize"></button>
+          <button class="term-btn term-max" id="term-max-btn" aria-label="Maximize Terminal" title="Maximize"></button>
+        </div>
+        <div class="terminal-title">
+          <span>samad@portfolio</span>:<span class="host">~ (zsh)</span>
+        </div>
+        <div class="terminal-hint">ESC or ` to close</div>
+      </div>
+      <div class="terminal-body" id="terminal-body" data-lenis-prevent>
+        <div class="terminal-banner" id="terminal-banner"></div>
+        <div class="terminal-history" id="terminal-history"></div>
+        <div class="terminal-prompt-row">
+          <span class="terminal-prompt-label">samad@portfolio:~$</span>
+          <div class="terminal-input-wrap">
+            <input type="text" id="terminal-input" autocomplete="off" spellcheck="false" placeholder="type 'help' or 'hire'..." />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
     const TOTAL = 240;
-    const DIR = 'frames';
+    const DIR = 'frames_webp';
+    const EXT = '.webp';
+    const CRITICAL_COUNT = 30;
 
     // Exact frame zones based on OpenCV frame analysis:
     // Frame 0-75: Intro (Gold, model facing center)
@@ -791,6 +1306,12 @@
     const cursorDot = document.getElementById('custom-cursor-dot');
     const cursorRing = document.getElementById('custom-cursor-ring');
 
+    // Lenis Smooth Scroll Reference & helper
+    let lenis = null;
+    function getScrollY() {
+      return (lenis && typeof lenis.scroll === 'number') ? lenis.scroll : window.scrollY;
+    }
+
     // Cursor position & physics state
     let mouseX = window.innerWidth / 2;
     let mouseY = window.innerHeight / 2;
@@ -814,7 +1335,7 @@
       let img = images[i];
       // Fallback to nearest loaded frame to eliminate any black flicker
       if (!img || !img.complete || !img.naturalWidth) {
-        for (let offset = 1; offset < 25; offset++) {
+        for (let offset = 1; offset < TOTAL; offset++) {
           if (i - offset >= 0 && images[i - offset] && images[i - offset].complete && images[i - offset].naturalWidth) {
             img = images[i - offset];
             break;
@@ -847,12 +1368,13 @@
         display = target;
       }
 
+      ensureWindow(display, 4);
       drawFrame(display);
       applyColorTheme(display);
 
       const hero = document.getElementById('hero');
       const maxScroll = hero.offsetHeight - window.innerHeight;
-      const pastHero = window.scrollY >= maxScroll;
+      const pastHero = getScrollY() >= maxScroll;
 
       // 1. Right Panel ("Full-Stack Engineer", Red Theme):
       // Active while model is looking right (frames 88 to 165)
@@ -861,12 +1383,28 @@
       rightPanel.classList.toggle('panel-visible', inSkillZone);
       rightPanel.classList.toggle('theme-red', inSkillZone);
 
+      if (inSkillZone && !rightPanelScrambled) {
+        rightPanelScrambled = true;
+        const tag = rightPanel.querySelector('.panel-tag');
+        if (tag) scrambleText(tag, 400);
+      } else if (!inSkillZone) {
+        rightPanelScrambled = false;
+      }
+
       // 2. Left Panel ("Building the Future", Blue Theme):
       // Active while model is looking left (frames 188 to 239)
       // Stays visible whether scrolling, paused, or reading!
       const inProjZone = display >= PROJECT_START && display <= PROJECT_END && !pastHero;
       leftPanel.classList.toggle('panel-visible', inProjZone);
       leftPanel.classList.toggle('theme-blue', inProjZone);
+
+      if (inProjZone && !leftPanelScrambled) {
+        leftPanelScrambled = true;
+        const tag = leftPanel.querySelector('.panel-tag');
+        if (tag) scrambleText(tag, 400);
+      } else if (!inProjZone) {
+        leftPanelScrambled = false;
+      }
 
       // 3. Dynamic Cursor Theming synchronized with photo frames:
       // Photo 1: Gold / Yellow phase (frame 0 to 79)
@@ -893,6 +1431,9 @@
         cursorRing.style.top = ringY + 'px';
       }
 
+      // Spring physics for magnetic buttons & navigation links
+      updateMagnetic();
+
       requestAnimationFrame(animLoop);
     }
 
@@ -900,11 +1441,13 @@
       const hero = document.getElementById('hero');
       const heroBottom = hero.offsetTop + hero.offsetHeight;
       const maxScroll = hero.offsetHeight - window.innerHeight;
-      const pct = Math.max(0, Math.min(1, window.scrollY / maxScroll));
+      const scrollY = getScrollY();
+      const pct = Math.max(0, Math.min(1, scrollY / maxScroll));
       target = pct * (TOTAL - 1);
+      ensureWindow(target, 6);
 
       // Past hero section — lock blue theme on body
-      const pastHero = window.scrollY >= heroBottom - window.innerHeight;
+      const pastHero = scrollY >= heroBottom - window.innerHeight;
       document.body.classList.toggle('post-hero-blue', pastHero);
 
       updateUI(target);
@@ -941,10 +1484,11 @@
     function updateUI(frame) {
       // Progress bar
       const totalScroll = document.documentElement.scrollHeight - window.innerHeight;
-      progressBar.style.width = (Math.min(1, window.scrollY / totalScroll) * 100) + '%';
+      const scrollY = getScrollY();
+      progressBar.style.width = (Math.min(1, scrollY / totalScroll) * 100) + '%';
 
-      navbar.classList.toggle('scrolled', window.scrollY > 20);
-      scrollHint.classList.toggle('hidden', window.scrollY > 80);
+      navbar.classList.toggle('scrolled', scrollY > 20);
+      scrollHint.classList.toggle('hidden', scrollY > 80);
 
       // Intro text fade-out
       if (frame >= INTRO_HIDE_START) {
@@ -1009,7 +1553,7 @@
     });
 
     // Hover effect on all interactive elements
-    const interactiveQuery = 'a, button, input, textarea, select, .project-card, .skill-pill, .stat-card, .contact-item, .skill-tag, .tech-badge, .nav-logo, .form-submit, .btn-primary, .btn-secondary';
+    const interactiveQuery = 'a, button, input, textarea, select, .project-card, .skill-pill, .stat-card, .contact-item, .skill-tag, .tech-badge, .nav-logo, .form-submit, .btn-primary, .btn-secondary, .terminal-pill, .term-btn, .footer-terminal-link';
     document.addEventListener('mouseover', (e) => {
       if (e.target && e.target.closest && e.target.closest(interactiveQuery)) {
         cursorRing.classList.add('cursor-hover');
@@ -1017,6 +1561,456 @@
         cursorRing.classList.remove('cursor-hover');
       }
     });
+
+    // ==========================================
+    // 1. MAGNETIC BUTTONS & NAVIGATION LINKS
+    // ==========================================
+    const magneticItems = [];
+    function initMagnetic() {
+      const targets = document.querySelectorAll(
+        '.magnetic, .btn-primary, .btn-secondary, .nav-links a, .nav-logo, .terminal-pill, .form-submit, .project-link.live-link, .leetcode-profile-btn, .footer-terminal-link'
+      );
+      targets.forEach(el => {
+        if (!el._hasMagnetic) {
+          el._hasMagnetic = true;
+          magneticItems.push({
+            el,
+            x: 0,
+            y: 0,
+            tx: 0,
+            ty: 0,
+            active: false
+          });
+        }
+      });
+    }
+
+    function updateMagnetic() {
+      if (!isCursorVisible) return;
+      const vh = window.innerHeight;
+
+      for (let i = 0; i < magneticItems.length; i++) {
+        const item = magneticItems[i];
+        const el = item.el;
+        const rect = el.getBoundingClientRect();
+
+        // Skip calculations if element is well outside visible viewport
+        if (rect.bottom < -40 || rect.top > vh + 40) {
+          if (item.active) {
+            item.tx = 0;
+            item.ty = 0;
+          }
+        } else {
+          // Center of the element without current magnetic offset
+          const cx = rect.left + rect.width / 2 - item.x;
+          const cy = rect.top + rect.height / 2 - item.y;
+          const dx = mouseX - cx;
+          const dy = mouseY - cy;
+          const dist = Math.hypot(dx, dy);
+
+          // Detection trigger radius: element size/2 + ~35px
+          const radius = Math.max(rect.width, rect.height) / 2 + 35;
+
+          if (dist < radius) {
+            item.active = true;
+            // Smooth spring pull, max pull offset ~14px
+            const pull = (1 - dist / radius) * 0.36;
+            item.tx = dx * pull;
+            item.ty = dy * pull;
+          } else {
+            item.tx = 0;
+            item.ty = 0;
+          }
+        }
+
+        // Spring interpolation (lerp)
+        item.x += (item.tx - item.x) * 0.22;
+        item.y += (item.ty - item.y) * 0.22;
+
+        if (Math.abs(item.x) > 0.04 || Math.abs(item.y) > 0.04) {
+          el.style.transform = `translate3d(${item.x.toFixed(2)}px, ${item.y.toFixed(2)}px, 0)`;
+        } else if (item.active && item.tx === 0 && item.ty === 0) {
+          el.style.transform = '';
+          item.x = 0;
+          item.y = 0;
+          item.active = false;
+        }
+      }
+    }
+
+    // ==========================================
+    // 2. TEXT SCRAMBLE / HACKER DECODE EFFECT
+    // ==========================================
+    const SCRAMBLE_GLYPHS = '&%#$@!<>-_\\/[]{}—=+*^?~0123456789';
+    let rightPanelScrambled = false;
+    let leftPanelScrambled = false;
+
+    function scrambleText(element, duration = 400) {
+      if (!element || element.dataset.scrambling === 'true') return;
+
+      // Find direct text node to scramble while preserving children (like pseudo-elements)
+      let textNode = null;
+      for (let i = 0; i < element.childNodes.length; i++) {
+        if (element.childNodes[i].nodeType === Node.TEXT_NODE && element.childNodes[i].textContent.trim().length > 0) {
+          textNode = element.childNodes[i];
+          break;
+        }
+      }
+
+      const original = element.dataset.originalText || (textNode ? textNode.textContent.trim() : element.textContent.trim());
+      if (!original) return;
+      if (!element.dataset.originalText) element.dataset.originalText = original;
+
+      element.dataset.scrambling = 'true';
+      const len = original.length;
+      const startTime = performance.now();
+
+      function update(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(1, elapsed / duration);
+        const lockedChars = Math.floor(progress * len);
+
+        let output = '';
+        for (let i = 0; i < len; i++) {
+          const char = original[i];
+          if (char === ' ' || char === '—' || char === '-') {
+            output += char;
+          } else if (i < lockedChars) {
+            output += char;
+          } else {
+            output += SCRAMBLE_GLYPHS[Math.floor(Math.random() * SCRAMBLE_GLYPHS.length)];
+          }
+        }
+
+        if (textNode) {
+          textNode.textContent = output;
+        } else {
+          element.textContent = output;
+        }
+
+        if (progress < 1) {
+          requestAnimationFrame(update);
+        } else {
+          if (textNode) {
+            textNode.textContent = original;
+          } else {
+            element.textContent = original;
+          }
+          element.dataset.scrambling = 'false';
+        }
+      }
+
+      requestAnimationFrame(update);
+    }
+
+    function initTextScramble() {
+      // IntersectionObserver for section labels
+      const scrambleObs = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            scrambleText(entry.target, 420);
+          }
+        });
+      }, { threshold: 0.2 });
+
+      document.querySelectorAll('.section-label').forEach(el => scrambleObs.observe(el));
+
+      // Interactive hover trigger on section labels, panel tags & greeting
+      document.querySelectorAll('.section-label, .panel-tag, .hero-greeting').forEach(el => {
+        el.addEventListener('mouseenter', () => scrambleText(el, 380));
+      });
+    }
+
+    // ==========================================
+    // 3. INTERACTIVE RETRO CLI TERMINAL
+    // ==========================================
+    function initTerminal() {
+      const modal = document.getElementById('terminal-modal');
+      const input = document.getElementById('terminal-input');
+      const history = document.getElementById('terminal-history');
+      const banner = document.getElementById('terminal-banner');
+      const triggerBtn = document.getElementById('terminal-trigger');
+      const footerBtn = document.getElementById('footer-terminal-btn');
+      const closeBtn = document.getElementById('term-close-btn');
+      const minBtn = document.getElementById('term-min-btn');
+      const maxBtn = document.getElementById('term-max-btn');
+      const termBody = document.getElementById('terminal-body');
+
+      if (!modal || !input) return;
+
+      let cmdHistory = [];
+      let historyIndex = -1;
+      let isOpen = false;
+
+      // Retro welcome banner
+      banner.textContent =
+`╔═══════════════════════════════════════════════════════════════════╗
+║  SAMAD KHAN — INTERACTIVE SHELL v2.4 (IIIT Gwalior)               ║
+║  Type "help" to view commands, or "hire" to initiate contact.     ║
+╚═══════════════════════════════════════════════════════════════════╝`;
+
+      function toggleTerminal() {
+        isOpen = !isOpen;
+        modal.classList.toggle('active', isOpen);
+        if (isOpen) {
+          if (lenis) lenis.stop();
+          setTimeout(() => input.focus(), 80);
+          termBody.scrollTop = termBody.scrollHeight;
+        } else {
+          if (lenis) lenis.start();
+        }
+      }
+
+      function closeTerminal() {
+        isOpen = false;
+        modal.classList.remove('active');
+        if (lenis) lenis.start();
+      }
+
+      triggerBtn && triggerBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        toggleTerminal();
+      });
+
+      footerBtn && footerBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        toggleTerminal();
+      });
+
+      closeBtn && closeBtn.addEventListener('click', closeTerminal);
+      minBtn && minBtn.addEventListener('click', closeTerminal);
+
+      let isMaximized = false;
+      maxBtn && maxBtn.addEventListener('click', () => {
+        const win = modal.querySelector('.terminal-window');
+        if (win) {
+          isMaximized = !isMaximized;
+          win.style.width = isMaximized ? '96vw' : '';
+          win.style.height = isMaximized ? '94vh' : '';
+        }
+      });
+
+      // Close on backdrop click
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeTerminal();
+      });
+
+      // Global keyboard shortcuts: ` or ~ toggles, ESC closes, Ctrl+K toggles
+      window.addEventListener('keydown', (e) => {
+        if (e.key === '`' || e.key === '~') {
+          const tag = document.activeElement ? document.activeElement.tagName.toLowerCase() : '';
+          if (tag !== 'textarea' && (tag !== 'input' || document.activeElement === input)) {
+            e.preventDefault();
+            toggleTerminal();
+          }
+        } else if (e.key === 'Escape' && isOpen) {
+          e.preventDefault();
+          closeTerminal();
+        } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+          e.preventDefault();
+          toggleTerminal();
+        }
+      });
+
+      const COMMANDS = {
+        help: () => `
+<div class="term-accent">AVAILABLE COMMANDS:</div>
+<div class="term-table">
+  <div><span class="term-cyan">about</span> / <span class="term-cyan">bio</span></div><div>Summary, institute &amp; background</div>
+  <div><span class="term-cyan">skills</span> / <span class="term-cyan">stack</span></div><div>Languages, frameworks, hardware &amp; DSA</div>
+  <div><span class="term-cyan">projects</span></div><div>Production apps &amp; hackathon winner details</div>
+  <div><span class="term-cyan">awards</span></div><div>National Hackathon 1st Runner-Up &amp; LeetCode medals</div>
+  <div><span class="term-cyan">education</span></div><div>IIIT Gwalior GPA, coursework &amp; schooling</div>
+  <div><span class="term-cyan">contact</span></div><div>Email, phone, LinkedIn &amp; GitHub links</div>
+  <div><span class="term-cyan">hire</span></div><div>Direct contact / recruiter fast-track</div>
+  <div><span class="term-cyan">theme &lt;color&gt;</span></div><div>Switch live theme (<span class="term-accent">yellow</span>, <span class="term-green">red</span>, <span class="term-cyan">blue</span>)</div>
+  <div><span class="term-cyan">clear</span></div><div>Clear terminal history</div>
+  <div><span class="term-cyan">sudo</span></div><div>Superuser verification test</div>
+  <div><span class="term-cyan">exit</span></div><div>Close terminal window</div>
+</div>
+<div class="term-muted">Tip: Use Tab for autocomplete, Up/Down arrow keys for command history.</div>`,
+
+        about: () => `
+<div class="term-accent">SAMAD KHAN — Software Engineer</div>
+<div>• B.Tech in Electrical &amp; Electronics Engineering at <span class="term-cyan">IIIT Gwalior</span> (JEE-Mains: <span class="term-green">98.12 %ile</span>).</div>
+<div>• Solved <span class="term-green">450+ DSA problems</span> (1,287+ submissions) with strong mastery of algorithms &amp; clean scalable systems.</div>
+<div>• Full-stack developer experienced in React, Next.js, Node.js, WebSockets, payment gateways &amp; predictive IoT systems.</div>
+<div>• Guitarist, filmmaker, Executive Member of Student Activity Council, and active technical club contributor.</div>`,
+
+        skills: () => `
+<div class="term-accent">TECHNICAL ARSENAL:</div>
+<div class="term-table">
+  <div><span class="term-cyan">LANGUAGES</span></div><div>C++, C, JavaScript, SQL, Kotlin, HTML5, CSS3, VHDL, Verilog</div>
+  <div><span class="term-cyan">FRONTEND</span></div><div>React.js, Next.js, Tailwind CSS, Shadcn UI, Responsive Web Design</div>
+  <div><span class="term-cyan">BACKEND</span></div><div>Node.js, Express.js, MongoDB, NextAuth, REST APIs, WebSockets</div>
+  <div><span class="term-cyan">REAL-TIME</span></div><div>Socket.io, Razorpay API, Sentry Monitoring, Multer File Uploads</div>
+  <div><span class="term-cyan">ALGORITHMS</span></div><div>1,287+ Submissions · 117-Day Active Daily Streak · Graphs, DP, Trees</div>
+  <div><span class="term-cyan">HARDWARE/IoT</span></div><div>Sensor Fusion, Edge Computing, Industrial Predictive Maintenance</div>
+</div>`,
+
+        projects: () => `
+<div class="term-accent">FEATURED PROJECTS:</div>
+<div style="margin-top:8px;">
+  <div><span class="term-accent">1. Smart Production Line Monitoring System (IoT)</span></div>
+  <div class="term-green">   🏆 1st Runner-Up at National Indux 5.0 Hackathon (₹75,000 Cash Prize)</div>
+  <div class="term-muted">   IoT edge predictive maintenance for industrial conveyor belts with vibration, temp &amp; load sensors.</div>
+  <div>   GitHub: <a href="https://github.com/samyiiitm63952" target="_blank">github.com/samyiiitm63952</a></div>
+</div>
+<div style="margin-top:10px;">
+  <div><span class="term-accent">2. Get Me Funding (Crowdfunding Web Platform)</span></div>
+  <div>   Live App: <a href="https://get-me-funding.vercel.app/" target="_blank">https://get-me-funding.vercel.app/</a> ↗</div>
+  <div class="term-muted">   Next.js, MongoDB, NextAuth &amp; Razorpay payments with real-time creator pledge tracking.</div>
+</div>
+<div style="margin-top:10px;">
+  <div><span class="term-accent">3. Full-Stack Job Portal</span></div>
+  <div>   Live App: <a href="https://job-portal-pi-ebon.vercel.app/" target="_blank">https://job-portal-pi-ebon.vercel.app/</a> ↗</div>
+  <div class="term-muted">   Recruiter &amp; candidate roles, Multer resume uploads, Sentry real-time error telemetry.</div>
+</div>
+<div style="margin-top:10px;">
+  <div><span class="term-accent">4. Realtime Multiplayer Chess Platform</span></div>
+  <div class="term-muted">   Multiplayer chess rooms, server-side validation via chess.js, low-latency WebSocket sync.</div>
+  <div>   GitHub: <a href="https://github.com/samyiiitm63952" target="_blank">github.com/samyiiitm63952</a></div>
+</div>`,
+
+        awards: () => `
+<div class="term-accent">HONORS &amp; RECOGNITION:</div>
+<div>• <span class="term-green">🏆 1st Runner-Up (2nd Prize)</span> at National Indux 5.0 Hackathon (₹75,000 Cash Prize).</div>
+<div>• <span class="term-green">⚡ 1,287+ Submissions</span> on LeetCode in the past year.</div>
+<div>• <span class="term-green">🔥 117-Day Daily Max Streak</span> with 208 total active days.</div>
+<div>• <span class="term-cyan">🏅 Official Medals</span>: 200 Days Badge, 100 Days Badge, 50 Days Badge &amp; Monthly Medals.</div>
+<div>• <span class="term-cyan">🎯 JEE Mains</span>: 98.12 Percentile.</div>`,
+
+        education: () => `
+<div class="term-accent">EDUCATION &amp; ACADEMICS:</div>
+<div>• <span class="term-cyan">Indian Institute of Information Technology Gwalior (IIIT Gwalior)</span></div>
+<div>  B.Tech in Electrical &amp; Electronics Engineering (Aug 2024 – Jul 2028)</div>
+<div>  CGPA: <span class="term-green">8.20 / 10</span> (Till Sem 4) | Sem 4 SGPA: <span class="term-green">8.91 / 10</span></div>
+<div>  Admission via JEE-Mains: <span class="term-accent">98.12 %ile</span></div>
+<div style="margin-top:6px;">• <span class="term-cyan">S.D. Inter College, Meerut (UP Board)</span></div>
+<div>  Class XII: 87.0% | Class X: 85.0%</div>`,
+
+        contact: () => `
+<div class="term-accent">LET'S CONNECT:</div>
+<div>📧 Email:    <a href="mailto:Samadkhan946148@gmail.com">Samadkhan946148@gmail.com</a></div>
+<div>📞 Phone:    <a href="tel:+916395280880">+91 6395280880</a></div>
+<div>💼 LinkedIn: <a href="https://www.linkedin.com/in/samad-khan-39ba42214" target="_blank">linkedin.com/in/samad-khan-39ba42214</a></div>
+<div>🐙 GitHub:   <a href="https://github.com/samyiiitm63952" target="_blank">github.com/samyiiitm63952</a></div>
+<div>📍 Location: Meerut, Uttar Pradesh, India</div>`,
+
+        hire: () => {
+          setTimeout(() => {
+            window.location.href = "mailto:Samadkhan946148@gmail.com?subject=Opportunity%20for%20Samad%20Khan%20%E2%80%94%20Software%20Engineer&body=Hi%20Samad%2C%0A%0AI%20came%20across%20your%20portfolio%20and%20would%20love%20to%20discuss%20an%20opportunity%20with%20you.%0A%0ABest%20regards%2C";
+          }, 800);
+          return `<div class="term-green">🚀 INITIATING HIRE PROTOCOL...</div>
+<div>Opening your mail client to <span class="term-accent">Samadkhan946148@gmail.com</span>...</div>
+<div class="term-muted">If your mail app didn't open automatically, write directly to Samadkhan946148@gmail.com</div>`;
+        },
+
+        sudo: () => `<div class="term-accent">[sudo] password for recruiter:</div><div>Permission denied: Samad is already root of this portfolio system 😉</div>`,
+        whoami: () => `<div>guest@recruiter — welcome! Let's talk engineering.</div>`,
+        date: () => `<div>${new Date().toString()}</div>`,
+        clear: () => {
+          history.innerHTML = '';
+          return null;
+        },
+        exit: () => {
+          closeTerminal();
+          return `<div>Terminal closed. Press \` to reopen.</div>`;
+        }
+      };
+
+      // Aliases
+      COMMANDS.bio = COMMANDS.about;
+      COMMANDS.stack = COMMANDS.skills;
+      COMMANDS.cls = COMMANDS.clear;
+      COMMANDS.quit = COMMANDS.exit;
+      COMMANDS.edu = COMMANDS.education;
+      COMMANDS.achievements = COMMANDS.awards;
+
+      function executeCommand(raw) {
+        const cmd = raw.trim();
+        if (!cmd) return;
+
+        cmdHistory.push(cmd);
+        historyIndex = cmdHistory.length;
+
+        // Print command echo
+        const echoLine = document.createElement('div');
+        echoLine.className = 'terminal-line cmd-echo';
+        echoLine.innerHTML = `<span class="p-label">samad@portfolio:~$</span> <span class="p-cmd">${escapeHTML(cmd)}</span>`;
+        history.appendChild(echoLine);
+
+        const parts = cmd.toLowerCase().split(/\s+/);
+        const action = parts[0];
+        const arg = parts[1];
+
+        if (action === 'theme') {
+          if (arg === 'red' || arg === 'blue' || arg === 'yellow') {
+            document.body.classList.remove('cursor-theme-yellow', 'cursor-theme-red', 'cursor-theme-blue');
+            document.body.classList.add('cursor-theme-' + arg);
+            currentCursorTheme = 'cursor-theme-' + arg;
+            if (arg === 'blue') {
+              document.body.classList.add('post-hero-blue');
+            } else {
+              document.body.classList.remove('post-hero-blue');
+            }
+            appendOutput(`<div class="term-green">✓ Switched portfolio theme to <span class="term-accent">${arg.toUpperCase()}</span>!</div>`);
+          } else {
+            appendOutput(`<div class="term-muted">Usage: theme &lt;yellow | red | blue&gt;</div>`);
+          }
+        } else if (COMMANDS[action]) {
+          const res = COMMANDS[action]();
+          if (res !== null) appendOutput(res);
+        } else {
+          appendOutput(`<div class="term-muted">Command not found: "${escapeHTML(action)}". Type <span class="term-accent">help</span> for available commands.</div>`);
+        }
+
+        termBody.scrollTop = termBody.scrollHeight;
+      }
+
+      function appendOutput(html) {
+        const line = document.createElement('div');
+        line.className = 'terminal-line';
+        line.innerHTML = html;
+        history.appendChild(line);
+      }
+
+      function escapeHTML(str) {
+        return str.replace(/[&<>"']/g, m => ({
+          '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+        }[m]));
+      }
+
+      // Input listener
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          const val = input.value;
+          input.value = '';
+          executeCommand(val);
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          if (cmdHistory.length > 0 && historyIndex > 0) {
+            historyIndex--;
+            input.value = cmdHistory[historyIndex];
+          }
+        } else if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          if (cmdHistory.length > 0 && historyIndex < cmdHistory.length - 1) {
+            historyIndex++;
+            input.value = cmdHistory[historyIndex];
+          } else {
+            historyIndex = cmdHistory.length;
+            input.value = '';
+          }
+        } else if (e.key === 'Tab') {
+          e.preventDefault();
+          const current = input.value.trim().toLowerCase();
+          if (!current) return;
+          const match = Object.keys(COMMANDS).find(c => c.startsWith(current));
+          if (match) input.value = match;
+        }
+      });
+    }
 
     // Contact form
     function handleFormSubmit(e) {
@@ -1037,51 +2031,177 @@
       }, 3000);
     }
 
-    // Preload with immediate frame 0 rendering & safety timeout
+    // LENIS SMOOTH SCROLL INITIALIZATION
+    function initLenis() {
+      if (typeof Lenis === 'undefined') return;
+      try {
+        lenis = new Lenis({
+          duration: 1.15,
+          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+          orientation: 'vertical',
+          gestureOrientation: 'vertical',
+          smoothWheel: true,
+          wheelMultiplier: 1.0,
+          touchMultiplier: 1.5,
+          infinite: false
+        });
+
+        function raf(time) {
+          if (lenis) lenis.raf(time);
+          requestAnimationFrame(raf);
+        }
+        requestAnimationFrame(raf);
+
+        lenis.on('scroll', () => {
+          onScroll();
+        });
+
+        // Smooth scroll for nav anchor links with Lenis
+        document.querySelectorAll('a[href^="#"]').forEach(link => {
+          link.addEventListener('click', (e) => {
+            const href = link.getAttribute('href');
+            if (href && href !== '#' && href.length > 1) {
+              const targetEl = document.querySelector(href);
+              if (targetEl) {
+                e.preventDefault();
+                lenis.scrollTo(targetEl, { offset: 0, duration: 1.2 });
+              }
+            }
+          });
+        });
+      } catch (err) {
+        console.warn('Lenis init skipped:', err);
+      }
+    }
+
+    // SMART CHUNKED PRELOADING & PRIORITIZED FETCHING
+    function getFrameSrc(i) {
+      return `${DIR}/frame_${String(i).padStart(4, '0')}${EXT}`;
+    }
+
+    function requestFrame(i, priority = 'auto') {
+      if (i < 0 || i >= TOTAL) return null;
+      if (images[i]) return images[i];
+
+      const img = new Image();
+      if ('fetchPriority' in img) {
+        img.fetchPriority = priority;
+      }
+      img.src = getFrameSrc(i);
+
+      img.onload = () => {
+        // Draw frame 0 immediately as soon as ready
+        if (i === 0 || (images[0] && images[0].complete && currentIdx === 0)) {
+          drawFrame(0);
+        }
+      };
+
+      img.onerror = () => {
+        // High-res JPEG fallback if WebP is unsupported or file missing
+        if (!img._retried) {
+          img._retried = true;
+          img.src = `frames/frame_${String(i).padStart(4, '0')}.jpg`;
+        }
+      };
+
+      images[i] = img;
+      return img;
+    }
+
+    // High-priority demand fetching for active scroll window
+    function ensureWindow(centerIdx, radius = 6) {
+      const start = Math.max(0, Math.floor(centerIdx - radius));
+      const end = Math.min(TOTAL - 1, Math.ceil(centerIdx + radius));
+      for (let j = start; j <= end; j++) {
+        if (!images[j]) {
+          requestFrame(j, 'high');
+        }
+      }
+    }
+
+    // Phase 1: High priority critical chunk (frames 0 to 29) - unlocks page in <0.5s!
     function preload() {
       return new Promise(resolve => {
-        let done = 0;
+        let criticalDone = 0;
         let resolved = false;
 
-        function finish() {
+        function finishCritical() {
           if (!resolved) {
             resolved = true;
             bar.style.width = '100%';
             loaderPct.textContent = '100%';
             resolve();
+            // Start progressive background chunking after critical batch
+            startBackgroundIdleChunks();
           }
         }
 
-        // Safety fallback: never block user interface on slow loading
-        const safetyTimer = setTimeout(finish, 4000);
+        // Fast safety fallback: page becomes playable within 500ms max guaranteed
+        const safetyTimer = setTimeout(finishCritical, 500);
 
-        for (let i = 0; i < TOTAL; i++) {
-          const img = new Image();
-          img.src = DIR + '/frame_' + String(i).padStart(4, '0') + '.jpg';
-          img.onload = img.onerror = () => {
-            done++;
-            const pct = Math.round((done / TOTAL) * 100);
+        for (let i = 0; i < CRITICAL_COUNT; i++) {
+          const img = requestFrame(i, 'high');
+          const onDone = () => {
+            criticalDone++;
+            const pct = Math.min(100, Math.round((criticalDone / CRITICAL_COUNT) * 100));
             bar.style.width = pct + '%';
             loaderPct.textContent = pct + '%';
-
-            // Draw frame 0 immediately as soon as ready
-            if (i === 0 || (images[0] && images[0].complete && currentIdx === 0)) {
-              drawFrame(0);
-            }
-
-            if (done === TOTAL) {
+            if (criticalDone >= CRITICAL_COUNT) {
               clearTimeout(safetyTimer);
-              finish();
+              finishCritical();
             }
           };
-          images[i] = img;
+
+          if (img.complete && img.naturalWidth) {
+            onDone();
+          } else {
+            img.addEventListener('load', onDone, { once: true });
+            img.addEventListener('error', onDone, { once: true });
+          }
         }
       });
     }
 
+    // Phase 2: Progressive background chunking using requestIdleCallback
+    function startBackgroundIdleChunks() {
+      let nextFrameIdx = CRITICAL_COUNT;
+      const CHUNK_SIZE = 25;
+
+      function loadNextChunk(deadline) {
+        let countInChunk = 0;
+        while (nextFrameIdx < TOTAL && countInChunk < CHUNK_SIZE && (!deadline || deadline.timeRemaining() > 3 || deadline.didTimeout)) {
+          requestFrame(nextFrameIdx, 'low');
+          nextFrameIdx++;
+          countInChunk++;
+        }
+
+        if (nextFrameIdx < TOTAL) {
+          if ('requestIdleCallback' in window) {
+            requestIdleCallback(loadNextChunk, { timeout: 160 });
+          } else {
+            setTimeout(loadNextChunk, 40);
+          }
+        }
+      }
+
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(loadNextChunk, { timeout: 100 });
+      } else {
+        setTimeout(loadNextChunk, 30);
+      }
+    }
+
     async function init() {
       resize();
-      setTimeout(() => heroIntro.classList.add('hero-intro-visible'), 150);
+      initLenis();
+      initMagnetic();
+      initTextScramble();
+      initTerminal();
+      setTimeout(() => {
+        heroIntro.classList.add('hero-intro-visible');
+        const greeting = heroIntro.querySelector('.hero-greeting');
+        if (greeting) scrambleText(greeting, 450);
+      }, 150);
       requestAnimationFrame(animLoop);
       await preload();
       loader.classList.add('hidden');
